@@ -1,4 +1,5 @@
 package model
+
 type Experience struct {
 	ID int `json:"id"`
 

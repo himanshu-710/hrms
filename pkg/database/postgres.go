@@ -3,11 +3,12 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	_ "github.com/lib/pq"
+	"os"
 )
 
 var DB *sql.DB
+
 func ConnectDB() error {
 
 	connStr := fmt.Sprintf(
@@ -32,5 +33,5 @@ func ConnectDB() error {
 
 	DB = db
 	return nil
-	
+
 }

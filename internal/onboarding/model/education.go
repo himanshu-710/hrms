@@ -1,4 +1,5 @@
 package model
+
 type Education struct {
 	ID int `json:"id"`
 

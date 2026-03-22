@@ -19,4 +19,20 @@ func RegisterOnboardingRoutes(r *gin.RouterGroup) {
 
 	onboarding.GET("/health", handler.Health)
 	onboarding.POST("/employee", handler.CreateEmployee)
+
+	onboarding.POST("/profile", handler.CreateEmployee)
+	onboarding.GET("/profile/:id", handler.GetProfile)
+	onboarding.POST("/education", handler.AddEducation)
+
+	onboarding.GET("/education/:employeeId", handler.GetEducation)
+
+	onboarding.DELETE("/education/:id", handler.DeleteEducation)
+
+	onboarding.POST("/experience", handler.AddExperience)
+
+	onboarding.GET("/experience/:employeeId", handler.GetExperience)
+
+	onboarding.DELETE("/experience/:id", handler.DeleteExperience)
+
+	onboarding.PUT("/addresses", handler.SaveAddresses)
 }

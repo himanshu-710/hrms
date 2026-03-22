@@ -1,4 +1,5 @@
 package model
+
 type EmployeeAsset struct {
 	ID int `json:"id"`
 

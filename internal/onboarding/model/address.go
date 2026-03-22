@@ -1,15 +1,18 @@
 package model
-type Address struct {
-	ID int `json:"id"`
 
+type Address struct {
+	Street     string `json:"street"`
+	City       string `json:"city"`
+	State      string `json:"state"`
+	Country    string `json:"country"`
+	PostalCode string `json:"postal_code"`
+}
+
+type AddressesRequest struct {
 	EmployeeID int `json:"employee_id"`
 
-	AddressType string `json:"address_type"`
+	Current   Address `json:"current"`
+	Permanent Address `json:"permanent"`
 
-	Street string `json:"street"`
-	City   string `json:"city"`
-	State  string `json:"state"`
-	Country string `json:"country"`
-
-	PostalCode string `json:"postal_code"`
+	CopyFromCurrent bool `json:"copy_from_current"`
 }
