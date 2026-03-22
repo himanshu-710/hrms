@@ -1,0 +1,33 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build output
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace
+go.work
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Test output
+coverage.out
