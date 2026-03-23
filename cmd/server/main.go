@@ -3,9 +3,7 @@ package main
 import (
 	"log"
 	"os"
-
 	"github.com/gin-gonic/gin"
-
 	"hrms/config"
 	"hrms/internal/onboarding/routes"
 	"hrms/pkg/database"
@@ -14,10 +12,10 @@ import (
 
 func main() {
 
-	// load env
+	
 	config.LoadEnv()
 
-	// connect db
+	
 	err := database.ConnectDB()
 	if err != nil {
 		log.Fatal("DB connection failed:", err)
@@ -28,17 +26,15 @@ func main() {
 		log.Fatal("Migration failed:", err)
 	}
 
-	// init logger
 	middleware.InitLogger()
 
 	r := gin.Default()
 
-	// middleware
+
 	r.Use(middleware.ErrorHandler())
 
 	api := r.Group("/api")
 
-	// register module routes
 	routes.RegisterOnboardingRoutes(api)
 
 	port := os.Getenv("PORT")

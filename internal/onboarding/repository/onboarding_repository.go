@@ -17,10 +17,9 @@ func NewOnboardingRepository(db *sql.DB) *OnboardingRepository {
 
 func (r *OnboardingRepository) CreateEmployee(firstName string, lastName string, email string, department string) error {
 
-	query := `
-	INSERT INTO employees(first_name,last_name,personal_email,department)
-	VALUES($1,$2,$3,$4)
-	`
+	query := 
+	`INSERT INTO employees(first_name,last_name,personal_email,department)
+	 VALUES($1,$2,$3,$4)`
 
 	_, err := r.DB.Exec(query, firstName, lastName, email, department)
 
@@ -29,11 +28,10 @@ func (r *OnboardingRepository) CreateEmployee(firstName string, lastName string,
 
 func (r *OnboardingRepository) GetEmployee(id int) (*model.Employee, error) {
 
-	query := `
-	SELECT id,first_name,last_name,personal_email,department
+	query := 
+	`SELECT id,first_name,last_name,personal_email,department
 	FROM employees
-	WHERE id=$1
-	`
+	WHERE id=$1`
 
 	row := r.DB.QueryRow(query, id)
 
@@ -56,11 +54,9 @@ func (r *OnboardingRepository) GetEmployee(id int) (*model.Employee, error) {
 
 func (r *OnboardingRepository) AddEducation(edu model.Education) error {
 
-	query := `
-	INSERT INTO employee_education
+	query := `INSERT INTO employee_education
 	(employee_id,degree,branch,university,cgpa_or_pct,year_of_joining,year_of_completion)
-	VALUES($1,$2,$3,$4,$5,$6,$7)
-	`
+	VALUES($1,$2,$3,$4,$5,$6,$7)`
 
 	_, err := r.DB.Exec(
 		query,
@@ -78,11 +74,9 @@ func (r *OnboardingRepository) AddEducation(edu model.Education) error {
 
 func (r *OnboardingRepository) GetEducation(employeeID int) ([]model.Education, error) {
 
-	query := `
-	SELECT id,employee_id,degree,branch,university,cgpa_or_pct,year_of_joining,year_of_completion
+	query := `SELECT id,employee_id,degree,branch,university,cgpa_or_pct,year_of_joining,year_of_completion
 	FROM employee_education
-	WHERE employee_id=$1
-	`
+	WHERE employee_id=$1`
 
 	rows, err := r.DB.Query(query, employeeID)
 	if err != nil {
@@ -120,10 +114,8 @@ func (r *OnboardingRepository) GetEducation(employeeID int) ([]model.Education, 
 
 func (r *OnboardingRepository) DeleteEducation(id int) error {
 
-	query := `
-	DELETE FROM employee_education
-	WHERE id=$1
-	`
+	query := `DELETE FROM employee_education
+	WHERE id=$1`
 
 	_, err := r.DB.Exec(query, id)
 
@@ -132,11 +124,9 @@ func (r *OnboardingRepository) DeleteEducation(id int) error {
 
 func (r *OnboardingRepository) AddExperience(exp model.Experience) error {
 
-	query := `
-	INSERT INTO employee_experience
+	query := `INSERT INTO employee_experience
 	(employee_id,company,role,start_date,end_date,currently_working)
-	VALUES($1,$2,$3,$4,$5,$6)
-	`
+	VALUES($1,$2,$3,$4,$5,$6)`
 
 	_, err := r.DB.Exec(
 		query,
@@ -153,11 +143,9 @@ func (r *OnboardingRepository) AddExperience(exp model.Experience) error {
 
 func (r *OnboardingRepository) GetExperience(employeeID int) ([]model.Experience, error) {
 
-	query := `
-	SELECT id,employee_id,company,role,start_date,end_date,currently_working
+	query := `SELECT id,employee_id,company,role,start_date,end_date,currently_working
 	FROM employee_experience
-	WHERE employee_id=$1
-	`
+	WHERE employee_id=$1`
 
 	rows, err := r.DB.Query(query, employeeID)
 	if err != nil {

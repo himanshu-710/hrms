@@ -3,7 +3,6 @@ package handler
 import (
 	"net/http"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"hrms/internal/onboarding/model"
 	"hrms/internal/onboarding/service"
