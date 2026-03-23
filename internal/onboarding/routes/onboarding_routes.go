@@ -15,23 +15,27 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	service := service.NewOnboardingService(repo)
 	handler := handler.NewOnboardingHandler(service)
 
-	api := app.Group("/api")
-	onboarding := api.Group("/onboarding")
+	onboarding := app.Group("/api/onboarding")
 
+	// Health check
 	onboarding.Get("/health", handler.Health)
 
+	// Employee Profile
 	onboarding.Post("/employee", handler.CreateEmployee)
-
-	onboarding.Post("/profile", handler.CreateEmployee)
 	onboarding.Get("/profile/:id", handler.GetProfile)
 
+	// Education
 	onboarding.Post("/education", handler.AddEducation)
 	onboarding.Get("/education/:employeeId", handler.GetEducation)
+	onboarding.Put("/education/:id", handler.UpdateEducation)
 	onboarding.Delete("/education/:id", handler.DeleteEducation)
 
+	// Experience
 	onboarding.Post("/experience", handler.AddExperience)
 	onboarding.Get("/experience/:employeeId", handler.GetExperience)
+	onboarding.Put("/experience/:id", handler.UpdateExperience)
 	onboarding.Delete("/experience/:id", handler.DeleteExperience)
 
+	// Addresses
 	onboarding.Put("/addresses", handler.SaveAddresses)
 }
