@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 
 	"hrms/internal/onboarding/handler"
 	"hrms/internal/onboarding/repository"
@@ -9,30 +9,29 @@ import (
 	"hrms/pkg/database"
 )
 
-func RegisterOnboardingRoutes(r *gin.RouterGroup) {
+func RegisterOnboardingRoutes(app *fiber.App) {
 
 	repo := repository.NewOnboardingRepository(database.DB)
 	service := service.NewOnboardingService(repo)
 	handler := handler.NewOnboardingHandler(service)
 
-	onboarding := r.Group("/onboarding")
+	api := app.Group("/api")
+	onboarding := api.Group("/onboarding")
 
-	onboarding.GET("/health", handler.Health)
-	onboarding.POST("/employee", handler.CreateEmployee)
+	onboarding.Get("/health", handler.Health)
 
-	onboarding.POST("/profile", handler.CreateEmployee)
-	onboarding.GET("/profile/:id", handler.GetProfile)
-	onboarding.POST("/education", handler.AddEducation)
+	onboarding.Post("/employee", handler.CreateEmployee)
 
-	onboarding.GET("/education/:employeeId", handler.GetEducation)
+	onboarding.Post("/profile", handler.CreateEmployee)
+	onboarding.Get("/profile/:id", handler.GetProfile)
 
-	onboarding.DELETE("/education/:id", handler.DeleteEducation)
+	onboarding.Post("/education", handler.AddEducation)
+	onboarding.Get("/education/:employeeId", handler.GetEducation)
+	onboarding.Delete("/education/:id", handler.DeleteEducation)
 
-	onboarding.POST("/experience", handler.AddExperience)
+	onboarding.Post("/experience", handler.AddExperience)
+	onboarding.Get("/experience/:employeeId", handler.GetExperience)
+	onboarding.Delete("/experience/:id", handler.DeleteExperience)
 
-	onboarding.GET("/experience/:employeeId", handler.GetExperience)
-
-	onboarding.DELETE("/experience/:id", handler.DeleteExperience)
-
-	onboarding.PUT("/addresses", handler.SaveAddresses)
+	onboarding.Put("/addresses", handler.SaveAddresses)
 }

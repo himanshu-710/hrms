@@ -1,16 +1,15 @@
 package utils
-import "github.com/gin-gonic/gin"
 
-func Success(c *gin.Context, data interface{}) {
-	c.JSON(200, gin.H{
-		"success": true,
-		"data":    data,
+import "github.com/gofiber/fiber/v2"
+
+func Success(c *fiber.Ctx, data interface{}) error {
+	return c.Status(200).JSON(fiber.Map{
+		"data": data,
 	})
 }
 
-func Error(c *gin.Context, msg string) {
-	c.JSON(500, gin.H{
-		"success": false,
-		"error":   msg,
+func Error(c *fiber.Ctx, msg string) error {
+	return c.Status(500).JSON(fiber.Map{
+		"error": msg,
 	})
 }

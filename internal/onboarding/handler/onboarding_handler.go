@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"net/http"
 	"strconv"
-	"github.com/gin-gonic/gin"
+
+	"github.com/gofiber/fiber/v2"
+
 	"hrms/internal/onboarding/model"
 	"hrms/internal/onboarding/service"
 )
@@ -18,13 +19,13 @@ func NewOnboardingHandler(service *service.OnboardingService) *OnboardingHandler
 	}
 }
 
-func (h *OnboardingHandler) Health(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
+func (h *OnboardingHandler) Health(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
 		"message": "Onboarding service working",
 	})
 }
 
-func (h *OnboardingHandler) CreateEmployee(c *gin.Context) {
+func (h *OnboardingHandler) CreateEmployee(c *fiber.Ctx) error {
 
 	var req struct {
 		FirstName  string `json:"first_name"`
@@ -33,11 +34,10 @@ func (h *OnboardingHandler) CreateEmployee(c *gin.Context) {
 		Department string `json:"department"`
 	}
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{
 			"error": err.Error(),
 		})
-		return
 	}
 
 	err := h.Service.CreateEmployee(
@@ -48,160 +48,150 @@ func (h *OnboardingHandler) CreateEmployee(c *gin.Context) {
 	)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
 		})
-		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	return c.JSON(fiber.Map{
 		"message": "Employee created successfully",
 	})
 }
-func (h *OnboardingHandler) GetProfile(c *gin.Context) {
 
-	idParam := c.Param("id")
+func (h *OnboardingHandler) GetProfile(c *fiber.Ctx) error {
+
+	idParam := c.Params("id")
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
-		return
+		return c.Status(400).JSON(fiber.Map{"error": "invalid id"})
 	}
 
 	emp, err := h.Service.GetEmployee(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, emp)
+	return c.JSON(emp)
 }
 
-func (h *OnboardingHandler) AddEducation(c *gin.Context) {
+func (h *OnboardingHandler) AddEducation(c *fiber.Ctx) error {
 
 	var edu model.Education
 
-	if err := c.ShouldBindJSON(&edu); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.BodyParser(&edu); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	err := h.Service.AddEducation(edu)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	return c.JSON(fiber.Map{
 		"message": "education added",
 	})
 }
-func (h *OnboardingHandler) GetEducation(c *gin.Context) {
 
-	idParam := c.Param("employeeId")
+func (h *OnboardingHandler) GetEducation(c *fiber.Ctx) error {
+
+	idParam := c.Params("employeeId")
 
 	id, _ := strconv.Atoi(idParam)
 
 	data, err := h.Service.GetEducation(id)
 
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(200, data)
+	return c.JSON(data)
 }
 
-func (h *OnboardingHandler) DeleteEducation(c *gin.Context) {
+func (h *OnboardingHandler) DeleteEducation(c *fiber.Ctx) error {
 
-	idParam := c.Param("id")
+	idParam := c.Params("id")
 
 	id, _ := strconv.Atoi(idParam)
 
 	err := h.Service.DeleteEducation(id)
 
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(200, gin.H{
+	return c.JSON(fiber.Map{
 		"message": "education deleted",
 	})
 }
 
-func (h *OnboardingHandler) AddExperience(c *gin.Context) {
+func (h *OnboardingHandler) AddExperience(c *fiber.Ctx) error {
 
 	var exp model.Experience
 
-	if err := c.ShouldBindJSON(&exp); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.BodyParser(&exp); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	err := h.Service.AddExperience(exp)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	return c.JSON(fiber.Map{
 		"message": "experience added",
 	})
 }
-func (h *OnboardingHandler) GetExperience(c *gin.Context) {
 
-	idParam := c.Param("employeeId")
+func (h *OnboardingHandler) GetExperience(c *fiber.Ctx) error {
+
+	idParam := c.Params("employeeId")
 
 	id, _ := strconv.Atoi(idParam)
 
 	data, err := h.Service.GetExperience(id)
 
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(200, data)
+	return c.JSON(data)
 }
 
-func (h *OnboardingHandler) DeleteExperience(c *gin.Context) {
+func (h *OnboardingHandler) DeleteExperience(c *fiber.Ctx) error {
 
-	idParam := c.Param("id")
+	idParam := c.Params("id")
 
 	id, _ := strconv.Atoi(idParam)
 
 	err := h.Service.DeleteExperience(id)
 
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(200, gin.H{
+	return c.JSON(fiber.Map{
 		"message": "experience deleted",
 	})
 }
 
-func (h *OnboardingHandler) SaveAddresses(c *gin.Context) {
+func (h *OnboardingHandler) SaveAddresses(c *fiber.Ctx) error {
 
 	var req model.AddressesRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	err := h.Service.SaveAddresses(req)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	return c.JSON(fiber.Map{
 		"message": "addresses saved",
 	})
 }
