@@ -2,20 +2,20 @@ package middleware
 
 import "github.com/gin-gonic/gin"
 
-type AppError struct{
-	Code int
-	Message string
+type AppError struct {
+	Code       int
+	Message    string
 	HTTPStatus int
 }
 
-func ErrorHandler() gin.HandlerFunc{
+func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
-		if len(c.Errors)> 0 {
+		if len(c.Errors) > 0 {
 			c.JSON(500, gin.H{
-				"error":c.Errors[0].Error(),
+				"error": c.Errors[0].Error(),
 			})
-			
+
 		}
 	}
 }

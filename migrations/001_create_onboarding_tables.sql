@@ -1,4 +1,4 @@
--- EMPLOYEES TABLE
+
 CREATE TABLE IF NOT EXISTS employees (
     id SERIAL PRIMARY KEY,
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS employees (
 );
 
 
--- EDUCATION
+
 CREATE TABLE IF NOT EXISTS employee_education (
     id SERIAL PRIMARY KEY,
 
@@ -46,7 +46,7 @@ CREATE INDEX IF NOT EXISTS idx_employee_education_employee_id
 ON employee_education(employee_id);
 
 
--- EXPERIENCE
+
 CREATE TABLE IF NOT EXISTS employee_experience (
     id SERIAL PRIMARY KEY,
 
@@ -65,7 +65,6 @@ CREATE INDEX IF NOT EXISTS idx_employee_experience_employee_id
 ON employee_experience(employee_id);
 
 
--- ADDRESSES
 CREATE TABLE IF NOT EXISTS employee_addresses (
     id SERIAL PRIMARY KEY,
 
@@ -85,13 +84,12 @@ CREATE INDEX IF NOT EXISTS idx_employee_addresses_employee_id
 ON employee_addresses(employee_id);
 
 
--- IDENTITY DOCUMENTS (PAN / AADHAAR)
 CREATE TABLE IF NOT EXISTS employee_identity_documents (
     id SERIAL PRIMARY KEY,
 
     employee_id INT REFERENCES employees(id) ON DELETE CASCADE,
 
-    doc_type TEXT, -- PAN / AADHAAR
+    doc_type TEXT, 
     encrypted_doc_number TEXT,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -103,7 +101,7 @@ CREATE INDEX IF NOT EXISTS idx_employee_identity_documents_employee_id
 ON employee_identity_documents(employee_id);
 
 
--- GENERAL DOCUMENTS (CERTIFICATES / RESUME)
+
 CREATE TABLE IF NOT EXISTS employee_documents (
     id SERIAL PRIMARY KEY,
 
@@ -129,7 +127,6 @@ CREATE INDEX IF NOT EXISTS idx_employee_documents_status
 ON employee_documents(verification_status);
 
 
--- ASSETS ASSIGNED
 CREATE TABLE IF NOT EXISTS employee_assets (
     id SERIAL PRIMARY KEY,
 
