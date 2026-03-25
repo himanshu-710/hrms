@@ -23,6 +23,7 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	// Employee Profile
 	onboarding.Post("/employee", handler.CreateEmployee)
 	onboarding.Get("/profile/:id", handler.GetProfile)
+	onboarding.Put("/profile/:id", handler.UpdateProfile)
 
 	// Education
 	onboarding.Post("/education", handler.AddEducation)

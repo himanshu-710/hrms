@@ -40,3 +40,19 @@ func (r *OnboardingRepository) GetEmployee(id int) (*model.Employee, error) {
 
 	return &emp, nil
 }
+
+func (r *OnboardingRepository) UpdateEmployee(id int, firstName string, lastName string, email string, department string) error {
+
+	query := `
+	UPDATE employees
+	SET first_name=$1,
+	    last_name=$2,
+	    personal_email=$3,
+	    department=$4
+	WHERE id=$5
+	`
+
+	_, err := r.DB.Exec(query, firstName, lastName, email, department, id)
+
+	return err
+}
