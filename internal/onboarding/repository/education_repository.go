@@ -1,8 +1,11 @@
 package repository
 
-import "hrms/internal/onboarding/model"
+import (
+	"context"
+	"hrms/internal/onboarding/model"
+)
 
-func (r *OnboardingRepository) AddEducation(edu model.Education) error {
+func (r *OnboardingRepository) AddEducation(req model.EducationRequest) error {  // changed
 
 	query := `
 	INSERT INTO employee_education
@@ -10,15 +13,9 @@ func (r *OnboardingRepository) AddEducation(edu model.Education) error {
 	VALUES($1,$2,$3,$4,$5,$6,$7)
 	`
 
-	_, err := r.DB.Exec(
-		query,
-		edu.EmployeeID,
-		edu.Degree,
-		edu.Branch,
-		edu.University,
-		edu.CGPAOrPct,
-		edu.YearOfJoining,
-		edu.YearOfCompletion,
+	_, err := r.DB.Exec(context.Background(), query,
+		req.EmployeeID, req.Degree, req.Branch, req.University,
+		req.CGPAOrPct, req.YearOfJoining, req.YearOfCompletion,
 	)
 
 	return err
@@ -32,30 +29,22 @@ func (r *OnboardingRepository) GetEducation(employeeID int) ([]model.Education, 
 	WHERE employee_id=$1
 	`
 
-	rows, err := r.DB.Query(query, employeeID)
+	rows, err := r.DB.Query(context.Background(), query, employeeID)
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
 
 	var list []model.Education
 
 	for rows.Next() {
-
 		var edu model.Education
 
 		err := rows.Scan(
-			&edu.ID,
-			&edu.EmployeeID,
-			&edu.Degree,
-			&edu.Branch,
-			&edu.University,
-			&edu.CGPAOrPct,
-			&edu.YearOfJoining,
-			&edu.YearOfCompletion,
+			&edu.ID, &edu.EmployeeID, &edu.Degree, &edu.Branch,
+			&edu.University, &edu.CGPAOrPct,
+			&edu.YearOfJoining, &edu.YearOfCompletion,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -63,44 +52,32 @@ func (r *OnboardingRepository) GetEducation(employeeID int) ([]model.Education, 
 		list = append(list, edu)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return list, nil
 }
 
-func (r *OnboardingRepository) UpdateEducation(id int, edu model.Education) error {
+func (r *OnboardingRepository) UpdateEducation(id int, req model.EducationRequest) error {  // changed
 
 	query := `
 	UPDATE employee_education
-	SET degree=$1,
-	    branch=$2,
-	    university=$3,
-	    cgpa_or_pct=$4,
-	    year_of_joining=$5,
-	    year_of_completion=$6
+	SET degree=$1, branch=$2, university=$3, cgpa_or_pct=$4,
+	    year_of_joining=$5, year_of_completion=$6
 	WHERE id=$7
 	`
 
-	_, err := r.DB.Exec(
-		query,
-		edu.Degree,
-		edu.Branch,
-		edu.University,
-		edu.CGPAOrPct,
-		edu.YearOfJoining,
-		edu.YearOfCompletion,
-		id,
+	_, err := r.DB.Exec(context.Background(), query,
+		req.Degree, req.Branch, req.University, req.CGPAOrPct,
+		req.YearOfJoining, req.YearOfCompletion, id,
 	)
 
 	return err
 }
 
 func (r *OnboardingRepository) DeleteEducation(id int) error {
-
-	query := `
-	DELETE FROM employee_education
-	WHERE id=$1
-	`
-
-	_, err := r.DB.Exec(query, id)
-
+	_, err := r.DB.Exec(context.Background(),
+		`DELETE FROM employee_education WHERE id=$1`, id)
 	return err
 }
