@@ -1,21 +1,24 @@
 package middleware
 
-import "github.com/gin-gonic/gin"
+import (
+	"log"
 
-type AppError struct{
-	Code int
-	Message string
-	HTTPStatus int
-}
+	"github.com/gofiber/fiber/v2"
+)
 
-func ErrorHandler() gin.HandlerFunc{
-	return func(c *gin.Context) {
-		c.Next()
-		if len(c.Errors)> 0 {
-			c.JSON(500, gin.H{
-				"error":c.Errors[0].Error(),
+func ErrorHandler() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+
+		err := c.Next()
+
+		if err != nil {
+			log.Println("Error:", err)
+
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": err.Error(),
 			})
-			
 		}
+
+		return nil
 	}
 }

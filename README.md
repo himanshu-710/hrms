@@ -1,14 +1,14 @@
-# HRMS Backend (Go + Gin)
+# HRMS Backend (Go + Fiber)
 
-A modular **HRMS (Human Resource Management System) backend** built using **Go**, **Gin**, and **PostgreSQL**.  
-This project is structured so that multiple teams can work on different HRMS modules in parallel.
+A modular **HRMS (Human Resource Management System) backend** built using **Go**, **Fiber**, and **PostgreSQL**.  
+This project follows a clean layered architecture so multiple developers can work on features independently.
 
 ---
 
 # Tech Stack
 
 - Go
-- Gin (HTTP Framework)
+- Fiber (HTTP Framework)
 - PostgreSQL
 - Zap Logger
 - Godotenv
@@ -26,120 +26,93 @@ hrms
 │
 ├── config                    # Environment configuration
 │
-├── internal                  # Feature modules
-│   ├── attendance
-│   ├── leave
-│   ├── onboarding
-│   ├── expenses
-│   └── assets
+├── internal
+│   └── onboarding            # Onboarding module
+│       ├── handler
+│       │   └── onboarding_handler.go
+│       │
+│       ├── service
+│       │   └── onboarding_service.go
+│       │
+│       ├── repository
+│       │   └── onboarding_repository.go
+│       │
+│       ├── model
+│       │   └── employee.go
+│       │
+│       └── routes
+│           └── onboarding_routes.go
 │
-├── pkg                       # Shared utilities
-│   ├── database
-│   ├── middleware
-│   └── utils
+├── pkg
+│   ├── database              # Database connection & migrations
+│   ├── middleware            # Fiber middleware
+│   └── utils                 # Helper utilities
 │
-├── .env.example              # Example environment variables
+├── migrations                # SQL migrations
+├── .env.example
 ├── go.mod
 ├── go.sum
 └── README.md
 ```
 
-Each feature module follows this architecture:
-
-```
-module
-│
-├── handler       # HTTP request handlers
-├── service       # Business logic
-└── repository    # Database queries
-```
-
-Architecture Flow:
-
-```
-Handler → Service → Repository → Database
-```
 ---
 
-# Module Implementation Guide
+# Architecture
 
-Each module inside `internal/` should follow the **Handler → Service → Repository architecture**.
-
-Example module:
+Each module follows the **Handler → Service → Repository architecture**.
 
 ```
-internal/onboarding
-│
-├── handler
-│   └── onboarding_handler.go
-│
-├── service
-│   └── onboarding_service.go
-│
-├── repository
-│   └── onboarding_repository.go
-│
-├── model
-│   └── onboarding_model.go
-│
-└── routes
-    └── onboarding_routes.go
+Client Request
+      ↓
+Fiber Router
+      ↓
+Handler
+      ↓
+Service
+      ↓
+Repository
+      ↓
+PostgreSQL
 ```
 
 ---
 
-# Handler Layer (HTTP Layer)
+# Handler Layer
 
-The **handler** is responsible for:
+The **handler layer** manages HTTP requests and responses.
 
-- Receiving HTTP requests
-- Parsing request body / params
-- Calling the service layer
-- Sending the HTTP response
+Responsibilities:
 
-Handlers should **not contain business logic or database queries**.
+- Parse request body
+- Read URL params
+- Call service layer
+- Send response to client
 
 Example:
 
 ```go
 package handler
 
-import (
-	"net/http"
+import "github.com/gofiber/fiber/v2"
 
-	"github.com/gin-gonic/gin"
-	"hrms/internal/onboarding/service"
-)
-
-type OnboardingHandler struct {
-	Service service.OnboardingService
-}
-
-func (h *OnboardingHandler) Health(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
+func Health(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
 		"message": "Onboarding service working",
 	})
 }
 ```
 
-Responsibilities:
-
-- Handle HTTP requests
-- Validate input
-- Call service functions
-- Return response
-
 ---
 
-# Service Layer (Business Logic)
+# Service Layer
 
-The **service layer** contains the business logic of the application.
+The **service layer** contains business logic.
 
 Responsibilities:
 
 - Implement business rules
-- Coordinate between handler and repository
-- Validate business logic
+- Validate data
+- Call repository functions
 
 Example:
 
@@ -149,7 +122,7 @@ package service
 import "hrms/internal/onboarding/repository"
 
 type OnboardingService struct {
-	Repo repository.OnboardingRepository
+	Repo *repository.OnboardingRepository
 }
 
 func (s *OnboardingService) CreateEmployee(name string) error {
@@ -157,32 +130,24 @@ func (s *OnboardingService) CreateEmployee(name string) error {
 }
 ```
 
-Responsibilities:
-
-- Business logic
-- Data processing
-- Calling repository functions
-
 ---
 
-# Repository Layer (Database Layer)
+# Repository Layer
 
-The **repository layer** interacts directly with the database.
+The **repository layer** communicates with the database.
 
 Responsibilities:
 
-- SQL queries
-- Data persistence
-- Returning data from DB
+- Execute SQL queries
+- Fetch data
+- Insert / update / delete records
 
 Example:
 
 ```go
 package repository
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type OnboardingRepository struct {
 	DB *sql.DB
@@ -195,17 +160,11 @@ func (r *OnboardingRepository) InsertEmployee(name string) error {
 }
 ```
 
-Responsibilities:
-
-- Execute SQL queries
-- Fetch data
-- Insert/update/delete records
-
 ---
 
-# Model Layer (Database Models)
+# Model Layer
 
-Models define the **structure of database entities**.
+Models represent database entities.
 
 Example:
 
@@ -213,25 +172,19 @@ Example:
 package model
 
 type Employee struct {
-	ID        int
-	Name      string
-	Email     string
-	Phone     string
+	ID         int
+	FirstName  string
+	LastName   string
+	Email      string
 	Department string
 }
 ```
-
-Responsibilities:
-
-- Define entity structures
-- Represent database tables
-- Used for request/response mapping
 
 ---
 
 # Routes Layer
 
-Routes connect HTTP endpoints to handlers.
+Routes connect endpoints to handlers.
 
 Example:
 
@@ -239,24 +192,19 @@ Example:
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"hrms/internal/onboarding/handler"
 )
 
-func RegisterOnboardingRoutes(r *gin.RouterGroup) {
+func RegisterOnboardingRoutes(app *fiber.App) {
 
-	onboarding := r.Group("/onboarding")
+	onboarding := app.Group("/api/onboarding")
 
 	h := handler.OnboardingHandler{}
 
-	onboarding.GET("/health", h.Health)
+	onboarding.Get("/health", h.Health)
 }
 ```
-
-Responsibilities:
-
-- Register endpoints
-- Map endpoints to handlers
 
 Example endpoint:
 
@@ -264,56 +212,6 @@ Example endpoint:
 GET /api/onboarding/health
 ```
 
----
-
-# Request Flow
-
-The request flow inside the application:
-
-```
-Client Request
-      ↓
-Gin Router
-      ↓
-Handler
-      ↓
-Service
-      ↓
-Repository
-      ↓
-PostgreSQL Database
-```
-
----
-
-# Best Practices
-
-- Keep handlers **thin**
-- Business logic should be in **services**
-- Database queries should only be in **repositories**
-- Do not access database directly from handlers
-- Use models for request and response structures
-
----
-
-# Example API Implementation Flow
-
-Example endpoint:
-
-```
-POST /api/onboarding/employee
-```
-
-Flow:
-
-```
-Handler → Service → Repository → Database
-```
-
-1. Handler receives HTTP request
-2. Service processes business logic
-3. Repository executes database query
-4. Response returned to client
 ---
 
 # Clone the Repository
@@ -334,7 +232,7 @@ cd hrms
 
 # Setup Environment Variables
 
-Create a `.env` file from the example.
+Create `.env` from example.
 
 ```
 cp .env.example .env
@@ -357,25 +255,21 @@ DB_SSLMODE=disable
 
 # Install Dependencies
 
-Run:
-
 ```
 go mod tidy
 ```
-
-This installs all required Go packages.
 
 ---
 
 # Setup PostgreSQL Database
 
-Create the database:
+Create database:
 
 ```
 CREATE DATABASE hrms;
 ```
 
-Verify it exists:
+Verify:
 
 ```
 \l
@@ -385,7 +279,7 @@ Verify it exists:
 
 # Run the Server
 
-From the project root:
+From project root:
 
 ```
 go run cmd/server/main.go
@@ -401,7 +295,7 @@ http://localhost:8080
 
 # Test API
 
-Example test endpoint:
+Health check endpoint:
 
 ```
 GET http://localhost:8080/api/onboarding/health
@@ -415,12 +309,11 @@ Expected response:
 }
 ```
 
-
 ---
 
 # Development Workflow
 
-Create a feature branch before working.
+Create a new feature branch:
 
 ```
 git checkout -b feature/<feature-name>
@@ -432,14 +325,14 @@ Example:
 git checkout -b feature/onboarding-api
 ```
 
-Commit your changes:
+Commit changes:
 
 ```
 git add .
 git commit -m "Added onboarding API"
 ```
 
-Push your branch:
+Push branch:
 
 ```
 git push origin feature/onboarding-api
@@ -451,25 +344,26 @@ Then open a **Pull Request**.
 
 # Coding Guidelines
 
+- Keep handlers thin
+- Business logic belongs in services
+- SQL queries belong in repositories
 - Follow Go formatting rules
+
+Format code:
 
 ```
 gofmt -w .
 ```
 
-- Run lint checks
+Run linter:
 
 ```
 golangci-lint run
 ```
 
-- Keep handlers small
-- Business logic should be in **service layer**
-- Database queries should be in **repository layer**
-
 ---
 
-# Running the Project (Quick Setup)
+# Quick Project Setup
 
 ```
 git clone <repo-url>
@@ -484,4 +378,3 @@ go run cmd/server/main.go
 ```
 
 ---
-

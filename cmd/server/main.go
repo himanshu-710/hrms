@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 
 	"hrms/config"
 	"hrms/internal/onboarding/routes"
@@ -14,36 +14,27 @@ import (
 
 func main() {
 
-	// load env
 	config.LoadEnv()
 
-	// connect db
 	err := database.ConnectDB()
 	if err != nil {
 		log.Fatal("DB connection failed:", err)
 	}
 
-	err = database.RunMigrations(database.DB)
+	err = database.RunMigrations() 
 	if err != nil {
 		log.Fatal("Migration failed:", err)
 	}
 
-	// init logger
 	middleware.InitLogger()
 
-	r := gin.Default()
+	app := fiber.New()
 
-	// middleware
-	r.Use(middleware.ErrorHandler())
+	app.Use(middleware.ErrorHandler())
 
-	api := r.Group("/api")
-
-	// register module routes
-	routes.RegisterOnboardingRoutes(api)
+	routes.RegisterOnboardingRoutes(app)
 
 	port := os.Getenv("PORT")
 
-	if err := r.Run(":" + port); err != nil {
-		log.Fatal("Failed to start server:", err)
-	}
+	log.Fatal(app.Listen(":" + port))
 }
