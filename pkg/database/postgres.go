@@ -1,13 +1,14 @@
 package database
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
-	_ "github.com/lib/pq"
 	"os"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var DB *sql.DB
+var DB *pgxpool.Pool
 
 func ConnectDB() error {
 
@@ -20,18 +21,18 @@ func ConnectDB() error {
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_SSLMODE"),
 	)
+
+	pool, err := pgxpool.New(context.Background(), connStr)
+	if err != nil {
+		return err
+	}
+
+	err = pool.Ping(context.Background())
+	if err != nil {
+		return err
+	}
+
+	DB = pool
 	fmt.Println("Database connected successfully")
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return err
-	}
-
-	DB = db
 	return nil
-
 }

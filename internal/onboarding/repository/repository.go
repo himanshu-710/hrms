@@ -1,12 +1,12 @@
 package repository
 
-import "database/sql"
+import "github.com/jackc/pgx/v5/pgxpool"
 
 type OnboardingRepository struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
-func NewOnboardingRepository(db *sql.DB) *OnboardingRepository {
+func NewOnboardingRepository(db *pgxpool.Pool) *OnboardingRepository {
 	return &OnboardingRepository{
 		DB: db,
 	}

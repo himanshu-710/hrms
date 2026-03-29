@@ -5,11 +5,16 @@ type Experience struct {
 
 	EmployeeID int `json:"employee_id"`
 
-	Company string `json:"company"`
-	Role    string `json:"role"`
+	CompanyName string `json:"company_name"`
+	Designation string `json:"designation"`
+
+	EmploymentType string `json:"employment_type"` // FULL_TIME / PART_TIME / CONTRACT
 
 	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
+	EndDate   *string `json:"end_date"` // nullable if currently working
 
-	CurrentlyWorking bool `json:"currently_working"`
+	IsCurrent bool `json:"is_current"`
+
+	Industry    string `json:"industry"`
+	Description string `json:"description"`
 }

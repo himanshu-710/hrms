@@ -21,7 +21,7 @@ func main() {
 		log.Fatal("DB connection failed:", err)
 	}
 
-	err = database.RunMigrations(database.DB)
+	err = database.RunMigrations() 
 	if err != nil {
 		log.Fatal("Migration failed:", err)
 	}

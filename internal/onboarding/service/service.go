@@ -1,13 +1,22 @@
 package service
 
-import "hrms/internal/onboarding/repository"
+import (
+    "hrms/internal/onboarding/repository"
+    "mime/multipart"
+)
 
-type OnboardingService struct {
-	Repo *repository.OnboardingRepository
+type StorageProvider interface {
+    Upload(file *multipart.FileHeader, path string) (string, error)
 }
 
-func NewOnboardingService(repo *repository.OnboardingRepository) *OnboardingService {
-	return &OnboardingService{
-		Repo: repo,
-	}
+type OnboardingService struct {
+    Repo    *repository.OnboardingRepository
+    Storage StorageProvider
+}
+
+func NewOnboardingService(repo *repository.OnboardingRepository, storage StorageProvider) *OnboardingService {
+    return &OnboardingService{
+        Repo:    repo,
+        Storage: storage,
+    }
 }

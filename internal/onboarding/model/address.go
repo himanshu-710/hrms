@@ -1,11 +1,16 @@
 package model
 
 type Address struct {
-	Street     string `json:"street"`
-	City       string `json:"city"`
-	State      string `json:"state"`
-	Country    string `json:"country"`
-	PostalCode string `json:"postal_code"`
+	ID            int    `json:"id"`
+	EmployeeID    int    `json:"employee_id"`
+	AddressType   string `json:"address_type"`   // ✅ ADD THIS
+	Line1         string `json:"line1"`
+	Line2         string `json:"line2"`
+	City          string `json:"city"`
+	State         string `json:"state"`
+	PinCode       string `json:"pin_code"`
+	Country       string `json:"country"`
+	OwnershipType string `json:"ownership_type"`
 }
 
 type AddressesRequest struct {

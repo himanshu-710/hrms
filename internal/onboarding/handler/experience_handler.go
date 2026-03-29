@@ -9,31 +9,25 @@ import (
 
 func (h *OnboardingHandler) AddExperience(c *fiber.Ctx) error {
 
-	var exp model.Experience
+	var req model.ExperienceRequest  // changed from model.Experience
 
-	if err := c.BodyParser(&exp); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.AddExperience(exp)
-
+	err := h.Service.AddExperience(req)  // changed
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "experience added",
-	})
+	return c.JSON(fiber.Map{"message": "experience added"})
 }
 
 func (h *OnboardingHandler) GetExperience(c *fiber.Ctx) error {
 
-	idParam := c.Params("employeeId")
-
-	id, _ := strconv.Atoi(idParam)
+	id, _ := strconv.Atoi(c.Params("employeeId"))
 
 	data, err := h.Service.GetExperience(id)
-
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -43,40 +37,30 @@ func (h *OnboardingHandler) GetExperience(c *fiber.Ctx) error {
 
 func (h *OnboardingHandler) DeleteExperience(c *fiber.Ctx) error {
 
-	idParam := c.Params("id")
-
-	id, _ := strconv.Atoi(idParam)
+	id, _ := strconv.Atoi(c.Params("id"))
 
 	err := h.Service.DeleteExperience(id)
-
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "experience deleted",
-	})
+	return c.JSON(fiber.Map{"message": "experience deleted"})
 }
 
 func (h *OnboardingHandler) UpdateExperience(c *fiber.Ctx) error {
 
-	idParam := c.Params("id")
+	id, _ := strconv.Atoi(c.Params("id"))
 
-	id, _ := strconv.Atoi(idParam)
+	var req model.ExperienceRequest  // changed from model.Experience
 
-	var exp model.Experience
-
-	if err := c.BodyParser(&exp); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.UpdateExperience(id, exp)
-
+	err := h.Service.UpdateExperience(id, req)  // changed
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "experience updated",
-	})
+	return c.JSON(fiber.Map{"message": "experience updated"})
 }
