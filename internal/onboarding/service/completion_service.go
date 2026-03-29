@@ -6,10 +6,9 @@ func (s *OnboardingService) ComputeCompletion(employeeID int) (*model.Completion
 
 	sections := make(map[string]bool)
 
-	// Profile → always true if employee exists
+	
 	sections["profile"] = true
 
-	// Contact → check mobile/email
 	emp, err := s.Repo.GetEmployee(employeeID)
 	if err != nil {
 		return nil, err
@@ -48,10 +47,8 @@ if err != nil {
 	sections["identity"] = identity
 	sections["assets"] = assets
 
-	// Relations (from JSONB)
 	sections["relations"] = emp.Relations != nil
 
-	// Calculate percentage
 	total := len(sections)
 	completed := 0
 

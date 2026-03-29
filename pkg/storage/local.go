@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
 	"mime/multipart"
 )
 
@@ -22,12 +21,10 @@ func (l *LocalStorage) Upload(file *multipart.FileHeader, path string) (string, 
 		return "", fmt.Errorf("file is required")
 	}
 
-	// file size validation (max 5MB)
 	if file.Size > 5*1024*1024 {
 		return "", fmt.Errorf("file size exceeds 5MB limit")
 	}
 
-	// file type validation
 	allowedTypes := map[string]bool{
 		"application/pdf": true,
 		"image/jpeg":      true,
@@ -41,12 +38,10 @@ func (l *LocalStorage) Upload(file *multipart.FileHeader, path string) (string, 
 		return "", fmt.Errorf("unsupported file type")
 	}
 
-	// prevent directory traversal
 	if strings.Contains(path, "..") {
 		return "", fmt.Errorf("invalid file path")
 	}
 
-	// ensure directory exists
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		return "", err

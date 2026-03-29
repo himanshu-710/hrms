@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
-
 	"hrms/internal/onboarding/model"
 	
 )
@@ -12,7 +11,6 @@ import (
 
 func (s *OnboardingService) UploadDocument(file *multipart.FileHeader, req model.UploadDocumentRequest) error {
 
-	// validation
 	if file.Size > 5*1024*1024 {
 		return fmt.Errorf("file too large")
 	}

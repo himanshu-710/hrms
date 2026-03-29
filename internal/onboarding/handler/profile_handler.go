@@ -2,14 +2,10 @@ package handler
 
 import (
 	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 	"hrms/internal/onboarding/model"
 
 )
-
-
-// ================= HEALTH =================
 
 func (h *OnboardingHandler) Health(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
@@ -17,7 +13,6 @@ func (h *OnboardingHandler) Health(c *fiber.Ctx) error {
 	})
 }
 
-// ================= CREATE EMPLOYEE =================
 
 func (h *OnboardingHandler) CreateEmployee(c *fiber.Ctx) error {
 
@@ -52,7 +47,7 @@ func (h *OnboardingHandler) CreateEmployee(c *fiber.Ctx) error {
 	})
 }
 
-// ================= GET FULL PROFILE =================
+
 
 func (h *OnboardingHandler) GetProfile(c *fiber.Ctx) error {
 
@@ -71,7 +66,7 @@ func (h *OnboardingHandler) GetProfile(c *fiber.Ctx) error {
 	return c.JSON(profile)
 }
 
-// ================= PRIMARY DETAILS =================
+
 
 func (h *OnboardingHandler) UpdatePrimaryDetails(c *fiber.Ctx) error {
 
@@ -97,7 +92,6 @@ func (h *OnboardingHandler) UpdatePrimaryDetails(c *fiber.Ctx) error {
 	})
 }
 
-// ================= CONTACT DETAILS =================
 
 func (h *OnboardingHandler) UpdateContactDetails(c *fiber.Ctx) error {
 
@@ -123,7 +117,7 @@ func (h *OnboardingHandler) UpdateContactDetails(c *fiber.Ctx) error {
 	})
 }
 
-// ================= RELATIONS =================
+
 
 func (h *OnboardingHandler) UpdateRelations(c *fiber.Ctx) error {
 

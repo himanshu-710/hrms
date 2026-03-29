@@ -7,7 +7,7 @@ import (
 	"hrms/internal/onboarding/model"
 )
 
-// GET assets
+
 func (h *OnboardingHandler) GetAssets(c *fiber.Ctx) error {
 
 	id, _ := strconv.Atoi(c.Query("employee_id"))
@@ -20,7 +20,7 @@ func (h *OnboardingHandler) GetAssets(c *fiber.Ctx) error {
 	return c.JSON(data)
 }
 
-// ACKNOWLEDGE
+
 func (h *OnboardingHandler) AcknowledgeAsset(c *fiber.Ctx) error {
 
 	id, _ := strconv.Atoi(c.Params("id"))
@@ -35,7 +35,7 @@ func (h *OnboardingHandler) AcknowledgeAsset(c *fiber.Ctx) error {
 	})
 }
 
-// ASSIGN (HR)
+
 func (h *OnboardingHandler) AssignAsset(c *fiber.Ctx) error {
 
 	var req model.EmployeeAsset

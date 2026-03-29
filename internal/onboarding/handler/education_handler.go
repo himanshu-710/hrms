@@ -9,13 +9,13 @@ import (
 
 func (h *OnboardingHandler) AddEducation(c *fiber.Ctx) error {
 
-	var req model.EducationRequest  // changed from model.Education
+	var req model.EducationRequest  
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.AddEducation(req)  // changed
+	err := h.Service.AddEducation(req)  
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -51,13 +51,13 @@ func (h *OnboardingHandler) UpdateEducation(c *fiber.Ctx) error {
 
 	id, _ := strconv.Atoi(c.Params("id"))
 
-	var req model.EducationRequest  // changed from model.Education
+	var req model.EducationRequest  
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.UpdateEducation(id, req)  // changed
+	err := h.Service.UpdateEducation(id, req)  
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

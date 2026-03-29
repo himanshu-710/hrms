@@ -21,8 +21,6 @@ func (s *OnboardingService) GetDashboard() ([]model.DashboardRowDTO, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// find incomplete sections
 		var incomplete []string
 		for k, v := range comp.Sections {
 			if !v {
@@ -30,7 +28,6 @@ func (s *OnboardingService) GetDashboard() ([]model.DashboardRowDTO, error) {
 			}
 		}
 
-		// days since joining
 		var days int
 		if emp.DateOfJoining != nil {
 			days = int(time.Since(*emp.DateOfJoining).Hours() / 24)

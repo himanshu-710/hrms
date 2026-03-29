@@ -5,7 +5,7 @@ import (
 	"hrms/internal/onboarding/model"
 )
 
-func (r *OnboardingRepository) AddEducation(req model.EducationRequest) error {  // changed
+func (r *OnboardingRepository) AddEducation(req model.EducationRequest) error {  
 
 	query := `
 	INSERT INTO employee_education

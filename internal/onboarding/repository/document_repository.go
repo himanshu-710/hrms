@@ -12,7 +12,6 @@ func (r *OnboardingRepository) SaveDocument(doc model.EmployeeDocument) error {
 	(employee_id, doc_category, file_name, s3_url, file_size_kb, mime_type)
 	VALUES($1,$2,$3,$4,$5,$6)
 	`
-
 	_, err := r.DB.Exec(context.Background(), query,
 		doc.EmployeeID, doc.DocCategory, doc.FileName,
 		doc.S3URL, doc.FileSizeKB, doc.MimeType,
@@ -27,7 +26,6 @@ func (r *OnboardingRepository) GetDocuments(employeeID int) ([]model.EmployeeDoc
 	SELECT id, employee_id, doc_category, file_name, s3_url, verification_status, uploaded_at
 	FROM employee_documents WHERE employee_id=$1
 	`
-
 	rows, err := r.DB.Query(context.Background(), query, employeeID)
 	if err != nil {
 		return nil, err

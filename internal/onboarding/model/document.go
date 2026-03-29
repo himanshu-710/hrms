@@ -7,16 +7,16 @@ type IdentityDocument struct {
 
 	EmployeeID int `json:"employee_id"`
 
-	DocType string `json:"doc_type"` // AADHAAR, PAN, etc.
+	DocType string `json:"doc_type"` 
 
-	DocNumber string `json:"doc_number"` // encrypted for Aadhaar/PAN
+	DocNumber string `json:"doc_number"` 
 
 	NameOnDoc string `json:"name_on_doc"`
 
 	IssueDate *time.Time `json:"issue_date"`
 	ExpiryDate *time.Time `json:"expiry_date"`
 
-	ExtraInfo map[string]interface{} `json:"extra_info"` // JSONB
+	ExtraInfo map[string]interface{} `json:"extra_info"` 
 
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -26,7 +26,7 @@ type EmployeeDocument struct {
 
 	EmployeeID int `json:"employee_id"`
 
-	DocCategory string `json:"doc_category"` // PAN_SCAN, AADHAAR_SCAN, etc.
+	DocCategory string `json:"doc_category"` 
 
 	FileName string `json:"file_name"`
 
@@ -35,7 +35,7 @@ type EmployeeDocument struct {
 	FileSizeKB int `json:"file_size_kb"`
 	MimeType   string `json:"mime_type"`
 
-	VerificationStatus string `json:"verification_status"` // PENDING, VERIFIED, REJECTED
+	VerificationStatus string `json:"verification_status"` 
 
 	VerifiedBy *int `json:"verified_by"`
 	VerifiedAt *time.Time `json:"verified_at"`

@@ -38,7 +38,7 @@ func (r *OnboardingRepository) GetIdentity(employeeID int) ([]model.IdentityDocu
 
 	query := `
 	SELECT id, employee_id, doc_type, doc_number, name_on_doc,
-	       issue_date, expiry_date, extra_info, created_at
+	issue_date, expiry_date, extra_info, created_at
 	FROM employee_identity_documents
 	WHERE employee_id=$1
 	`
