@@ -3,7 +3,7 @@ package model
 type Address struct {
 	ID            int    `json:"id"`
 	EmployeeID    int    `json:"employee_id"`
-	AddressType   string `json:"address_type"`   // ✅ ADD THIS
+	AddressType   string `json:"address_type"`   
 	Line1         string `json:"line1"`
 	Line2         string `json:"line2"`
 	City          string `json:"city"`

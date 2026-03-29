@@ -2,7 +2,7 @@ package service
 
 import "hrms/internal/onboarding/model"
 
-func (s *OnboardingService) AddExperience(req model.ExperienceRequest) error {  // changed
+func (s *OnboardingService) AddExperience(req model.ExperienceRequest) error { 
 	return s.Repo.AddExperience(req)
 }
 
@@ -10,7 +10,7 @@ func (s *OnboardingService) GetExperience(employeeID int) ([]model.Experience, e
 	return s.Repo.GetExperience(employeeID)
 }
 
-func (s *OnboardingService) UpdateExperience(id int, req model.ExperienceRequest) error {  // changed
+func (s *OnboardingService) UpdateExperience(id int, req model.ExperienceRequest) error {  
 	return s.Repo.UpdateExperience(id, req)
 }
 

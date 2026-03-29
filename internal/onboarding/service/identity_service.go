@@ -10,7 +10,6 @@ func (s *OnboardingService) SaveIdentity(req model.IdentityRequest) error {
 
 	key := []byte(os.Getenv("AES_KEY"))
 
-	// Encrypt only sensitive docs
 	if req.DocType == "AADHAAR" || req.DocType == "PAN" {
 		encrypted, err := utils.Encrypt(req.DocNumber, key)
 		if err != nil {
@@ -42,7 +41,6 @@ func (s *OnboardingService) GetIdentity(employeeID int) ([]model.IdentityDocumen
 				return nil, err
 			}
 
-			// Apply masking
 			if doc.DocType == "AADHAAR" {
 				doc.DocNumber = utils.MaskAadhaar(decrypted)
 			} else if doc.DocType == "PAN" {

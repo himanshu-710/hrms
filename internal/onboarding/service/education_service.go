@@ -2,7 +2,7 @@ package service
 
 import "hrms/internal/onboarding/model"
 
-func (s *OnboardingService) AddEducation(req model.EducationRequest) error {  // changed
+func (s *OnboardingService) AddEducation(req model.EducationRequest) error { 
 	return s.Repo.AddEducation(req)
 }
 
@@ -10,7 +10,7 @@ func (s *OnboardingService) GetEducation(employeeID int) ([]model.Education, err
 	return s.Repo.GetEducation(employeeID)
 }
 
-func (s *OnboardingService) UpdateEducation(id int, req model.EducationRequest) error {  // changed
+func (s *OnboardingService) UpdateEducation(id int, req model.EducationRequest) error {  
 	return s.Repo.UpdateEducation(id, req)
 }
 

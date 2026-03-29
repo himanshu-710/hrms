@@ -1,4 +1,3 @@
--- ================= ENUM TYPES =================
 
 DO $$ BEGIN
     CREATE TYPE gender_enum AS ENUM ('MALE','FEMALE','NON_BINARY','PREFER_NOT_TO_SAY');
@@ -55,7 +54,6 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
--- ================= EMPLOYEES =================
 
 CREATE TABLE IF NOT EXISTS employees (
     id SERIAL PRIMARY KEY,
@@ -103,7 +101,7 @@ CREATE TABLE IF NOT EXISTS employees (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ================= EDUCATION =================
+
 
 CREATE TABLE IF NOT EXISTS employee_education (
     id SERIAL PRIMARY KEY,
@@ -123,7 +121,7 @@ CREATE TABLE IF NOT EXISTS employee_education (
 CREATE INDEX IF NOT EXISTS idx_employee_education_employee_id
 ON employee_education(employee_id);
 
--- ================= EXPERIENCE =================
+
 
 CREATE TABLE IF NOT EXISTS employee_experience (
     id SERIAL PRIMARY KEY,
@@ -145,7 +143,7 @@ CREATE TABLE IF NOT EXISTS employee_experience (
 CREATE INDEX IF NOT EXISTS idx_employee_experience_employee_id
 ON employee_experience(employee_id);
 
--- ================= ADDRESSES =================
+
 
 CREATE TABLE IF NOT EXISTS employee_addresses (
     id SERIAL PRIMARY KEY,
@@ -169,7 +167,6 @@ CREATE TABLE IF NOT EXISTS employee_addresses (
 CREATE INDEX IF NOT EXISTS idx_employee_addresses_employee_id
 ON employee_addresses(employee_id);
 
--- ================= IDENTITY DOCUMENTS =================
 
 CREATE TABLE IF NOT EXISTS employee_identity_documents (
     id SERIAL PRIMARY KEY,
@@ -192,7 +189,7 @@ CREATE TABLE IF NOT EXISTS employee_identity_documents (
 CREATE INDEX IF NOT EXISTS idx_employee_identity_documents_employee_id
 ON employee_identity_documents(employee_id);
 
--- ================= DOCUMENTS =================
+
 
 CREATE TABLE IF NOT EXISTS employee_documents (
     id SERIAL PRIMARY KEY,
@@ -221,7 +218,7 @@ ON employee_documents(employee_id);
 CREATE INDEX IF NOT EXISTS idx_employee_documents_status
 ON employee_documents(verification_status);
 
--- ================= ASSETS =================
+
 
 CREATE TABLE IF NOT EXISTS employee_assets (
     id SERIAL PRIMARY KEY,

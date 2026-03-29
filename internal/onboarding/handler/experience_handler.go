@@ -9,13 +9,13 @@ import (
 
 func (h *OnboardingHandler) AddExperience(c *fiber.Ctx) error {
 
-	var req model.ExperienceRequest  // changed from model.Experience
+	var req model.ExperienceRequest  
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.AddExperience(req)  // changed
+	err := h.Service.AddExperience(req)  
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -51,13 +51,13 @@ func (h *OnboardingHandler) UpdateExperience(c *fiber.Ctx) error {
 
 	id, _ := strconv.Atoi(c.Params("id"))
 
-	var req model.ExperienceRequest  // changed from model.Experience
+	var req model.ExperienceRequest  
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.UpdateExperience(id, req)  // changed
+	err := h.Service.UpdateExperience(id, req)  
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

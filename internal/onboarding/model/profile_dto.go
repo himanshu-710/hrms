@@ -8,8 +8,8 @@ type OnboardingProfileDTO struct {
 	Documents  []EmployeeDocument `json:"documents"`
 	Assets     []EmployeeAsset    `json:"assets"`
 
-	Identity  []IdentityDocument     `json:"identity"`  // NEW
-	Relations map[string]interface{} `json:"relations"` // NEW
+	Identity  []IdentityDocument     `json:"identity"`  
+	Relations map[string]interface{} `json:"relations"` 
 }
 
 type PrimaryDetailsRequest struct {

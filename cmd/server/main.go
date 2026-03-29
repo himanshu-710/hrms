@@ -3,13 +3,12 @@ package main
 import (
 	"log"
 	"os"
-
 	"github.com/gofiber/fiber/v2"
-
 	"hrms/config"
 	"hrms/internal/onboarding/routes"
 	"hrms/pkg/database"
 	"hrms/pkg/middleware"
+	"fmt"
 )
 
 func main() {

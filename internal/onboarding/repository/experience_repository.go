@@ -5,7 +5,7 @@ import (
 	"hrms/internal/onboarding/model"
 )
 
-func (r *OnboardingRepository) AddExperience(req model.ExperienceRequest) error {  // changed
+func (r *OnboardingRepository) AddExperience(req model.ExperienceRequest) error {  
 
 	query := `
 	INSERT INTO employee_experience
@@ -60,7 +60,7 @@ func (r *OnboardingRepository) GetExperience(employeeID int) ([]model.Experience
 	return list, nil
 }
 
-func (r *OnboardingRepository) UpdateExperience(id int, req model.ExperienceRequest) error {  // changed
+func (r *OnboardingRepository) UpdateExperience(id int, req model.ExperienceRequest) error {  
 
 	query := `
 	UPDATE employee_experience

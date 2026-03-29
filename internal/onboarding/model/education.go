@@ -15,5 +15,5 @@ type Education struct {
 	YearOfJoining    int `json:"year_of_joining"`
 	YearOfCompletion int `json:"year_of_completion"`
 
-	CertificateURL string `json:"certificate_url"` // PRD field (optional upload)
+	CertificateURL string `json:"certificate_url"` 
 }

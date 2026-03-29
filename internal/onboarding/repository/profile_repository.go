@@ -118,7 +118,7 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		return nil, err
 	}
 
-	// Addresses
+	
 	addrRows, err := r.DB.Query(context.Background(), `
 	SELECT id,employee_id,address_type,line1,line2,city,state,pin_code,country,ownership_type
 	FROM employee_addresses WHERE employee_id=$1`, id)
@@ -141,7 +141,7 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		addresses = append(addresses, addr)
 	}
 
-	// Documents
+	
 	docRows, err := r.DB.Query(context.Background(), `
 	SELECT id,employee_id,doc_category,file_name,s3_url,file_size_kb,mime_type,
 	       verification_status,verified_by,verified_at,rejection_note,uploaded_at
@@ -166,7 +166,7 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		documents = append(documents, doc)
 	}
 
-	// Assets
+	
 	assetRows, err := r.DB.Query(context.Background(), `
 	SELECT id,employee_id,asset_type,asset_name,asset_category,serial_no,
 	       assigned_on,acknowledgement_status,acknowledged_at,condition,
@@ -192,7 +192,7 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		assets = append(assets, a)
 	}
 
-	// Identity
+	
 	idRows, err := r.DB.Query(context.Background(), `
 	SELECT id,employee_id,doc_type,doc_number,name_on_doc,
 	       issue_date,expiry_date,extra_info,created_at
