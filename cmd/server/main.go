@@ -8,7 +8,6 @@ import (
 	"hrms/internal/onboarding/routes"
 	"hrms/pkg/database"
 	"hrms/pkg/middleware"
-	"fmt"
 )
 
 func main() {

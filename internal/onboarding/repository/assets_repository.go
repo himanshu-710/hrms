@@ -63,19 +63,19 @@ func (r *OnboardingRepository) AcknowledgeAsset(id int) error {
 	return nil
 }
 
-func (r *OnboardingRepository) AssignAsset(a model.EmployeeAsset) error {
+func (r *OnboardingRepository) AssignAsset(req model.AssignAssetRequest) error {  
 
-	query := `
-	INSERT INTO employee_assets
-	(employee_id, asset_type, asset_name, asset_category,
-	 serial_no, assigned_on, condition, assigned_by, notes, is_active)
-	VALUES($1,$2,$3,$4,$5,NOW(),$6,$7,$8,true)
-	`
+    query := `
+    INSERT INTO employee_assets
+    (employee_id, asset_type, asset_name, asset_category,
+     serial_no, assigned_on, condition, assigned_by, notes, is_active)
+    VALUES($1,$2,$3,$4,$5,NOW(),$6,$7,$8,true)
+    `
 
-	_, err := r.DB.Exec(context.Background(), query,
-		a.EmployeeID, a.AssetType, a.AssetName, a.AssetCategory,
-		a.SerialNo, a.Condition, a.AssignedBy, a.Notes,
-	)
+    _, err := r.DB.Exec(context.Background(), query,
+        req.EmployeeID, req.AssetType, req.AssetName, req.AssetCategory,
+        req.SerialNo, req.Condition, req.AssignedBy, req.Notes,
+    )
 
-	return err
+    return err
 }
