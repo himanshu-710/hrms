@@ -2,12 +2,10 @@ package service
 
 import (
 	"fmt"
+	"hrms/internal/onboarding/model"
 	"mime/multipart"
 	"path/filepath"
-	"hrms/internal/onboarding/model"
-	
 )
-
 
 func (s *OnboardingService) UploadDocument(file *multipart.FileHeader, req model.UploadDocumentRequest) error {
 
@@ -16,7 +14,8 @@ func (s *OnboardingService) UploadDocument(file *multipart.FileHeader, req model
 	}
 
 	ext := filepath.Ext(file.Filename)
-	path := fmt.Sprintf("uploads/%d/%s%s", req.EmployeeID, req.DocCategory, ext)
+	fileName := fmt.Sprintf("%s_%d%s", req.DocCategory, req.EmployeeID, ext)
+	path := fmt.Sprintf("uploads/%d/%s", req.EmployeeID, fileName)
 
 	url, err := s.Storage.Upload(file, path)
 	if err != nil {

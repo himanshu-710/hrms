@@ -1,67 +1,64 @@
 package routes
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"hrms/internal/onboarding/handler"
-	"hrms/internal/onboarding/repository"
-	"hrms/internal/onboarding/service"
-	"hrms/pkg/database"
-	"hrms/pkg/storage" 
+    "github.com/gofiber/fiber/v2"
+    "hrms/internal/onboarding/handler"
+    "hrms/internal/onboarding/repository"
+    "hrms/internal/onboarding/service"
+    "hrms/pkg/database"
+    "hrms/pkg/storage"
 )
 
 func RegisterOnboardingRoutes(app *fiber.App) {
 
-	repo := repository.NewOnboardingRepository(database.DB)
-	store :=  storage.NewLocalStorage()  
-	service := service.NewOnboardingService(repo,store)
-	handler := handler.NewOnboardingHandler(service)
+    repo := repository.NewOnboardingRepository(database.DB)
+    store, err := storage.NewMinIOStorage()
+if err != nil {
+    panic(err)
+}
+    svc := service.NewOnboardingService(repo, store)
+    h := handler.NewOnboardingHandler(svc)
 
-	onboarding := app.Group("/api/v1/onboarding")
+    onboarding := app.Group("/api/v1/onboarding")
 
-	onboarding.Get("/health", handler.Health)
+    onboarding.Get("/health", h.Health)
 
-	
-	onboarding.Post("/employee", handler.CreateEmployee)
-	onboarding.Get("/profile/:id", handler.GetProfile)
+    
+    onboarding.Post("/employee", h.CreateEmployee)
+    onboarding.Get("/profile/:id", h.GetProfile)
+    onboarding.Put("/profile/:employeeId/primary", h.UpdatePrimaryDetails)
+    onboarding.Put("/profile/:employeeId/contact", h.UpdateContactDetails)
+    onboarding.Put("/profile/:employeeId/relations", h.UpdateRelations)
+    onboarding.Put("/profile/:employeeId/addresses", h.SaveAddresses)
 
-	onboarding.Put("/profile/primary", handler.UpdatePrimaryDetails)
-	onboarding.Put("/profile/contact", handler.UpdateContactDetails)
-	onboarding.Put("/relations", handler.UpdateRelations)
+  
+    onboarding.Post("/education", h.AddEducation)
+    onboarding.Get("/education/:employeeId", h.GetEducation)
+    onboarding.Put("/education/:id", h.UpdateEducation)
+    onboarding.Delete("/education/:id", h.DeleteEducation)
 
-	
-	onboarding.Post("/education", handler.AddEducation)
-	onboarding.Get("/education/:employeeId", handler.GetEducation)
-	onboarding.Put("/education/:id", handler.UpdateEducation)
-	onboarding.Delete("/education/:id", handler.DeleteEducation)
+    
+    onboarding.Post("/experience", h.AddExperience)
+    onboarding.Get("/experience/:employeeId", h.GetExperience)
+    onboarding.Put("/experience/:id", h.UpdateExperience)
+    onboarding.Delete("/experience/:id", h.DeleteExperience)
 
-	
-	onboarding.Post("/experience", handler.AddExperience)
-	onboarding.Get("/experience/:employeeId", handler.GetExperience)
-	onboarding.Put("/experience/:id", handler.UpdateExperience)
-	onboarding.Delete("/experience/:id", handler.DeleteExperience)
+   
+    onboarding.Put("/profile/:employeeId/identity", h.SaveIdentity)
+    onboarding.Get("/profile/:employeeId/identity", h.GetIdentity)
 
-	
-	onboarding.Put("/addresses", handler.SaveAddresses)
+    
+    onboarding.Post("/profile/:employeeId/documents", h.UploadDocument)
+    onboarding.Get("/profile/:employeeId/documents", h.GetDocuments)
+    onboarding.Delete("/documents/:id", h.DeleteDocument)
+    onboarding.Patch("/documents/:id/verify", h.VerifyDocument)
 
-	
-	onboarding.Get("/completion", handler.GetCompletion)
+    
+    onboarding.Post("/profile/:employeeId/assets", h.AssignAsset)
+    onboarding.Get("/profile/:employeeId/assets", h.GetAssets)
+    onboarding.Patch("/assets/:id/acknowledge", h.AcknowledgeAsset)
 
-	
-
-	onboarding.Put("/identity", handler.SaveIdentity)
-	onboarding.Get("/identity", handler.GetIdentity)
-
-	
-	onboarding.Post("/documents/upload", handler.UploadDocument)
-onboarding.Get("/documents", handler.GetDocuments)
-onboarding.Delete("/documents/:id", handler.DeleteDocument)
-onboarding.Patch("/documents/:id/verify", handler.VerifyDocument)
-
-
-onboarding.Get("/admin/dashboard", handler.GetDashboard)
-
-onboarding.Get("/assets", handler.GetAssets)
-onboarding.Patch("/assets/:id/acknowledge", handler.AcknowledgeAsset)
-onboarding.Post("/assets", handler.AssignAsset)
-
+   
+    onboarding.Get("/profile/:employeeId/completion", h.GetCompletion)
+    onboarding.Get("/admin/dashboard", h.GetDashboard)
 }

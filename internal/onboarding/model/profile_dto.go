@@ -76,3 +76,26 @@ type ExperienceRequest struct {
 	Industry       string  `json:"industry"`
 	Description    string  `json:"description"`
 }
+
+type AssignAssetRequest struct {
+    EmployeeID    int    `json:"employee_id"`
+    AssetType     string `json:"asset_type"`
+    AssetName     string `json:"asset_name"`
+    AssetCategory string `json:"asset_category"`
+    SerialNo      string `json:"serial_no"`
+    Condition     string `json:"condition"`
+    AssignedBy    int    `json:"assigned_by"`
+    Notes         string `json:"notes"`
+}
+
+type CreateEmployeeRequest struct {
+    FirstName  string `json:"first_name"`
+    LastName   string `json:"last_name"`
+    Email      string `json:"personal_email"`
+    Department string `json:"department"`
+}
+
+type VerifyDocumentRequest struct {
+    Status string `json:"status"`
+    Note   string `json:"note"`
+}

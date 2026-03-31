@@ -10,6 +10,6 @@ func (s *OnboardingService) AcknowledgeAsset(id int) error {
 	return s.Repo.AcknowledgeAsset(id)
 }
 
-func (s *OnboardingService) AssignAsset(a model.EmployeeAsset) error {
-	return s.Repo.AssignAsset(a)
+func (s *OnboardingService) AssignAsset(req model.AssignAssetRequest) error {  
+    return s.Repo.AssignAsset(req)
 }
