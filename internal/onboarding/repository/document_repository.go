@@ -6,7 +6,6 @@ import (
 )
 
 func (r *OnboardingRepository) SaveDocument(doc model.EmployeeDocument) error {
-
 	query := `
 	INSERT INTO employee_documents
 	(employee_id, doc_category, file_name, s3_url, file_size_kb, mime_type)
@@ -16,15 +15,14 @@ func (r *OnboardingRepository) SaveDocument(doc model.EmployeeDocument) error {
 		doc.EmployeeID, doc.DocCategory, doc.FileName,
 		doc.S3URL, doc.FileSizeKB, doc.MimeType,
 	)
-
 	return err
 }
 
 func (r *OnboardingRepository) GetDocuments(employeeID int) ([]model.EmployeeDocument, error) {
-
 	query := `
 	SELECT id, employee_id, doc_category, file_name, s3_url, verification_status, uploaded_at
 	FROM employee_documents WHERE employee_id=$1
+	ORDER BY uploaded_at DESC
 	`
 	rows, err := r.DB.Query(context.Background(), query, employeeID)
 	if err != nil {
@@ -33,10 +31,8 @@ func (r *OnboardingRepository) GetDocuments(employeeID int) ([]model.EmployeeDoc
 	defer rows.Close()
 
 	var list []model.EmployeeDocument
-
 	for rows.Next() {
 		var doc model.EmployeeDocument
-
 		err := rows.Scan(
 			&doc.ID, &doc.EmployeeID, &doc.DocCategory,
 			&doc.FileName, &doc.S3URL,
@@ -45,10 +41,8 @@ func (r *OnboardingRepository) GetDocuments(employeeID int) ([]model.EmployeeDoc
 		if err != nil {
 			return nil, err
 		}
-
 		list = append(list, doc)
 	}
-
 	return list, nil
 }
 
@@ -66,4 +60,13 @@ func (r *OnboardingRepository) VerifyDocument(id int, status string, note string
 	`
 	_, err := r.DB.Exec(context.Background(), query, status, note, id)
 	return err
+}
+
+
+func (r *OnboardingRepository) GetDocumentOwner(id int) (int, error) {
+	var employeeID int
+	err := r.DB.QueryRow(context.Background(),
+		`SELECT employee_id FROM employee_documents WHERE id=$1`, id,
+	).Scan(&employeeID)
+	return employeeID, err
 }

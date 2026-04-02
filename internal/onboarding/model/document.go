@@ -31,6 +31,7 @@ type EmployeeDocument struct {
 	FileName string `json:"file_name"`
 
 	S3URL string `json:"s3_url"`
+	 PresignedURL       string     `json:"presigned_url"` 
 
 	FileSizeKB int `json:"file_size_kb"`
 	MimeType   string `json:"mime_type"`

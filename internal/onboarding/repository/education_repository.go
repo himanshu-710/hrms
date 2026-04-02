@@ -81,3 +81,10 @@ func (r *OnboardingRepository) DeleteEducation(id int) error {
 		`DELETE FROM employee_education WHERE id=$1`, id)
 	return err
 }
+func (r *OnboardingRepository) GetEducationOwner(id int) (int, error) {
+	var employeeID int
+	err := r.DB.QueryRow(context.Background(),
+		`SELECT employee_id FROM employee_education WHERE id=$1`, id,
+	).Scan(&employeeID)
+	return employeeID, err
+}
