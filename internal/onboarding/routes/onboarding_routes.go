@@ -1,64 +1,87 @@
 package routes
 
 import (
-    "github.com/gofiber/fiber/v2"
-    "hrms/internal/onboarding/handler"
-    "hrms/internal/onboarding/repository"
-    "hrms/internal/onboarding/service"
-    "hrms/pkg/database"
-    "hrms/pkg/storage"
+	"strconv"
+
+	"hrms/internal/onboarding/handler"
+	"hrms/internal/onboarding/repository"
+	"hrms/internal/onboarding/service"
+	"hrms/pkg/database"
+	"hrms/pkg/middleware"
+	"hrms/pkg/storage"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func RegisterOnboardingRoutes(app *fiber.App) {
 
-    repo := repository.NewOnboardingRepository(database.DB)
-    store, err := storage.NewMinIOStorage()
-if err != nil {
-    panic(err)
-}
-    svc := service.NewOnboardingService(repo, store)
-    h := handler.NewOnboardingHandler(svc)
+	repo := repository.NewOnboardingRepository(database.DB)
+	store := storage.NewLocalStorage()
+	svc := service.NewOnboardingService(repo, store)
+	h := handler.NewOnboardingHandler(svc)
 
-    onboarding := app.Group("/api/v1/onboarding")
+	RegisterAuthRoutes(app, h)
+	app.Post("/api/v1/onboarding/employee", h.CreateEmployee)
+	onboarding := app.Group("/api/v1/onboarding", middleware.AuthMiddleware())
 
-    onboarding.Get("/health", h.Health)
+	onboarding.Get("/health", h.Health)
 
-    
-    onboarding.Post("/employee", h.CreateEmployee)
-    onboarding.Get("/profile/:id", h.GetProfile)
-    onboarding.Put("/profile/:employeeId/primary", h.UpdatePrimaryDetails)
-    onboarding.Put("/profile/:employeeId/contact", h.UpdateContactDetails)
-    onboarding.Put("/profile/:employeeId/relations", h.UpdateRelations)
-    onboarding.Put("/profile/:employeeId/addresses", h.SaveAddresses)
+	// Employee
 
-  
-    onboarding.Post("/education", h.AddEducation)
-    onboarding.Get("/education/:employeeId", h.GetEducation)
-    onboarding.Put("/education/:id", h.UpdateEducation)
-    onboarding.Delete("/education/:id", h.DeleteEducation)
+	onboarding.Get("/profile/:id", h.GetProfile)
 
-    
-    onboarding.Post("/experience", h.AddExperience)
-    onboarding.Get("/experience/:employeeId", h.GetExperience)
-    onboarding.Put("/experience/:id", h.UpdateExperience)
-    onboarding.Delete("/experience/:id", h.DeleteExperience)
+	// Profile — employeeId in URL, simple ownership check
+	onboarding.Put("/profile/:employeeId/primary", middleware.OwnershipGuard(), h.UpdatePrimaryDetails)
+	onboarding.Put("/profile/:employeeId/contact", middleware.OwnershipGuard(), h.UpdateContactDetails)
+	onboarding.Put("/profile/:employeeId/relations", middleware.OwnershipGuard(), h.UpdateRelations)
+	onboarding.Put("/profile/:employeeId/addresses", middleware.OwnershipGuard(), h.SaveAddresses)
 
-   
-    onboarding.Put("/profile/:employeeId/identity", h.SaveIdentity)
-    onboarding.Get("/profile/:employeeId/identity", h.GetIdentity)
+	// Education — ownerFn for update/delete because URL has :id not :employeeId
+	onboarding.Post("/education", h.AddEducation)
+	onboarding.Get("/education/:employeeId", middleware.OwnershipGuard(), h.GetEducation)
+	onboarding.Put("/education/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
+		id, _ := strconv.Atoi(c.Params("id"))
+		return repo.GetEducationOwner(id)
+	}), h.UpdateEducation)
+	onboarding.Delete("/education/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
+		id, _ := strconv.Atoi(c.Params("id"))
+		return repo.GetEducationOwner(id)
+	}), h.DeleteEducation)
 
-    
-    onboarding.Post("/profile/:employeeId/documents", h.UploadDocument)
-    onboarding.Get("/profile/:employeeId/documents", h.GetDocuments)
-    onboarding.Delete("/documents/:id", h.DeleteDocument)
-    onboarding.Patch("/documents/:id/verify", h.VerifyDocument)
+	// Experience — same pattern
+	onboarding.Post("/experience", h.AddExperience)
+	onboarding.Get("/experience/:employeeId", middleware.OwnershipGuard(), h.GetExperience)
+	onboarding.Put("/experience/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
+		id, _ := strconv.Atoi(c.Params("id"))
+		return repo.GetExperienceOwner(id)
+	}), h.UpdateExperience)
+	onboarding.Delete("/experience/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
+		id, _ := strconv.Atoi(c.Params("id"))
+		return repo.GetExperienceOwner(id)
+	}), h.DeleteExperience)
 
-    
-    onboarding.Post("/profile/:employeeId/assets", h.AssignAsset)
-    onboarding.Get("/profile/:employeeId/assets", h.GetAssets)
-    onboarding.Patch("/assets/:id/acknowledge", h.AcknowledgeAsset)
+	// Identity
+	onboarding.Put("/profile/:employeeId/identity", middleware.OwnershipGuard(), h.SaveIdentity)
+	onboarding.Get("/profile/:employeeId/identity", middleware.OwnershipGuard(), h.GetIdentity)
 
-   
-    onboarding.Get("/profile/:employeeId/completion", h.GetCompletion)
-    onboarding.Get("/admin/dashboard", h.GetDashboard)
+	// Documents
+	onboarding.Post("/profile/:employeeId/documents", middleware.OwnershipGuard(), h.UploadDocument)
+	onboarding.Get("/profile/:employeeId/documents", middleware.OwnershipGuard(), h.GetDocuments)
+	onboarding.Delete("/documents/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
+		id, _ := strconv.Atoi(c.Params("id"))
+		return repo.GetDocumentOwner(id)
+	}), h.DeleteDocument)
+	onboarding.Patch("/documents/:id/verify", h.VerifyDocument) // HR check in service layer
+
+	// Assets
+	onboarding.Post("/profile/:employeeId/assets", h.AssignAsset)
+	onboarding.Get("/profile/:employeeId/assets", middleware.OwnershipGuard(), h.GetAssets)
+	onboarding.Patch("/assets/:id/acknowledge", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
+		id, _ := strconv.Atoi(c.Params("id"))
+		return repo.GetAssetOwner(id)
+	}), h.AcknowledgeAsset)
+
+	// Completion & Admin
+	onboarding.Get("/profile/:employeeId/completion", middleware.OwnershipGuard(), h.GetCompletion)
+	onboarding.Get("/admin/dashboard", h.GetDashboard)
 }

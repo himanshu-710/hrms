@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"io"
 	"mime"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
-	"mime/multipart"
+	"time"
 )
 
 type LocalStorage struct{}
@@ -20,7 +21,6 @@ func (l *LocalStorage) Upload(file *multipart.FileHeader, path string) (string, 
 	if file == nil {
 		return "", fmt.Errorf("file is required")
 	}
-
 	if file.Size > 5*1024*1024 {
 		return "", fmt.Errorf("file size exceeds 5MB limit")
 	}
@@ -30,14 +30,11 @@ func (l *LocalStorage) Upload(file *multipart.FileHeader, path string) (string, 
 		"image/jpeg":      true,
 		"image/png":       true,
 	}
-
 	ext := filepath.Ext(file.Filename)
 	mimeType := mime.TypeByExtension(ext)
-
 	if !allowedTypes[mimeType] {
 		return "", fmt.Errorf("unsupported file type")
 	}
-
 	if strings.Contains(path, "..") {
 		return "", fmt.Errorf("invalid file path")
 	}
@@ -63,6 +60,7 @@ func (l *LocalStorage) Upload(file *multipart.FileHeader, path string) (string, 
 		return "", err
 	}
 
+	
 	return path, nil
 }
 
@@ -71,4 +69,9 @@ func (l *LocalStorage) Delete(path string) error {
 		return fmt.Errorf("invalid file path")
 	}
 	return os.Remove(path)
+}
+
+
+func (l *LocalStorage) GetPresignedURL(objectPath string, expiry time.Duration) (string, error) {
+	return objectPath, nil
 }

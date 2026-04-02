@@ -247,3 +247,8 @@ CREATE TABLE IF NOT EXISTS employee_assets (
 
 CREATE INDEX IF NOT EXISTS idx_employee_assets_employee_id
 ON employee_assets(employee_id);
+
+
+ALTER TABLE employees ADD COLUMN IF NOT EXISTS password_hash TEXT;
+ALTER TABLE employees ADD COLUMN IF NOT EXISTS refresh_token_hash TEXT;
+ALTER TABLE employees ADD COLUMN IF NOT EXISTS refresh_token_expiry TIMESTAMP;

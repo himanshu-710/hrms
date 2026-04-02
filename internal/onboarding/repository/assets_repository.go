@@ -79,3 +79,10 @@ func (r *OnboardingRepository) AssignAsset(req model.AssignAssetRequest) error {
 
     return err
 }
+func (r *OnboardingRepository) GetAssetOwner(id int) (int, error) {
+	var employeeID int
+	err := r.DB.QueryRow(context.Background(),
+		`SELECT employee_id FROM employee_assets WHERE id=$1`, id,
+	).Scan(&employeeID)
+	return employeeID, err
+}

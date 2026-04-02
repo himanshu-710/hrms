@@ -84,3 +84,10 @@ func (r *OnboardingRepository) DeleteExperience(id int) error {
 		`DELETE FROM employee_experience WHERE id=$1`, id)
 	return err
 }
+func (r *OnboardingRepository) GetExperienceOwner(id int) (int, error) {
+	var employeeID int
+	err := r.DB.QueryRow(context.Background(),
+		`SELECT employee_id FROM employee_experience WHERE id=$1`, id,
+	).Scan(&employeeID)
+	return employeeID, err
+}
