@@ -16,7 +16,10 @@ import (
 func RegisterOnboardingRoutes(app *fiber.App) {
 
 	repo := repository.NewOnboardingRepository(database.DB)
-	store := storage.NewLocalStorage()
+	store, err := storage.NewMinIOStorage()
+	if err != nil {
+		panic(err)
+	}
 	svc := service.NewOnboardingService(repo, store)
 	h := handler.NewOnboardingHandler(svc)
 	hrOnly := middleware.RequireRoles("HR")
