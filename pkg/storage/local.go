@@ -60,7 +60,6 @@ func (l *LocalStorage) Upload(file *multipart.FileHeader, path string) (string, 
 		return "", err
 	}
 
-	
 	return path, nil
 }
 
@@ -71,7 +70,17 @@ func (l *LocalStorage) Delete(path string) error {
 	return os.Remove(path)
 }
 
-
 func (l *LocalStorage) GetPresignedURL(objectPath string, expiry time.Duration) (string, error) {
-	return objectPath, nil
+	_ = expiry
+
+	if objectPath == "" {
+		return "", fmt.Errorf("object path is required")
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	return fmt.Sprintf("http://localhost:%s/%s", port, strings.TrimLeft(filepath.ToSlash(objectPath), "/")), nil
 }

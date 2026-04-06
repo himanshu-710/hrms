@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
-	"os"
 	"github.com/gofiber/fiber/v2"
 	"hrms/config"
 	"hrms/internal/onboarding/routes"
 	"hrms/pkg/database"
 	"hrms/pkg/middleware"
+	"log"
+	"os"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		log.Fatal("DB connection failed:", err)
 	}
 
-	err = database.RunMigrations() 
+	err = database.RunMigrations()
 	if err != nil {
 		log.Fatal("Migration failed:", err)
 	}
@@ -29,6 +29,7 @@ func main() {
 	app := fiber.New()
 
 	app.Use(middleware.ErrorHandler())
+	app.Static("/uploads", "./uploads")
 
 	routes.RegisterOnboardingRoutes(app)
 

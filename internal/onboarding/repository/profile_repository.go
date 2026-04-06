@@ -12,22 +12,27 @@ import (
 	"hrms/pkg/utils"
 )
 
-func (r *OnboardingRepository) CreateEmployee(firstName, lastName, email, department string) error {
+func (r *OnboardingRepository) CreateEmployee(firstName, lastName, email, department, employmentContextRole string) error {
 	query := `
-	INSERT INTO employees(first_name, last_name, personal_email, employee_code, work_email)
-	VALUES($1,$2,$3,$4,$5)
+	INSERT INTO employees(first_name, last_name, personal_email, employee_code, work_email, employment_context_role)
+	VALUES($1,$2,$3,$4,$5,$6)
 	`
 	code := fmt.Sprintf("EMP-%d", time.Now().UnixMilli())
 	workEmail := fmt.Sprintf("%s.%s@company.com", strings.ToLower(firstName), strings.ToLower(lastName))
 
-	_, err := r.DB.Exec(context.Background(), query, firstName, lastName, email, code, workEmail)
+	_, err := r.DB.Exec(context.Background(), query, firstName, lastName, email, code, workEmail, employmentContextRole)
 	return err
 }
 
 func (r *OnboardingRepository) GetEmployee(id int) (*model.Employee, error) {
 
 	query := `
-	SELECT id, first_name, last_name, personal_email, mobile_no, relations
+	SELECT id,
+	       first_name,
+	       last_name,
+	       COALESCE(personal_email, ''),
+	       COALESCE(mobile_no, ''),
+	       relations
 	FROM employees
 	WHERE id=$1
 	`
@@ -118,9 +123,17 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		return nil, err
 	}
 
-	
 	addrRows, err := r.DB.Query(context.Background(), `
-	SELECT id,employee_id,address_type,line1,line2,city,state,pin_code,country,ownership_type
+	SELECT id,
+	       employee_id,
+	       address_type,
+	       COALESCE(line1, ''),
+	       COALESCE(line2, ''),
+	       COALESCE(city, ''),
+	       COALESCE(state, ''),
+	       COALESCE(pin_code, ''),
+	       COALESCE(country, ''),
+	       COALESCE(ownership_type::TEXT, '')
 	FROM employee_addresses WHERE employee_id=$1`, id)
 	if err != nil {
 		return nil, err
@@ -141,10 +154,19 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		addresses = append(addresses, addr)
 	}
 
-	
 	docRows, err := r.DB.Query(context.Background(), `
-	SELECT id,employee_id,doc_category,file_name,s3_url,file_size_kb,mime_type,
-	       verification_status,verified_by,verified_at,rejection_note,uploaded_at
+	SELECT id,
+	       employee_id,
+	       COALESCE(doc_category, ''),
+	       COALESCE(file_name, ''),
+	       COALESCE(s3_url, ''),
+	       file_size_kb,
+	       COALESCE(mime_type, ''),
+	       verification_status,
+	       verified_by,
+	       verified_at,
+	       rejection_note,
+	       uploaded_at
 	FROM employee_documents WHERE employee_id=$1`, id)
 	if err != nil {
 		return nil, err
@@ -166,11 +188,20 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		documents = append(documents, doc)
 	}
 
-	
 	assetRows, err := r.DB.Query(context.Background(), `
-	SELECT id,employee_id,asset_type,asset_name,asset_category,serial_no,
-	       assigned_on,acknowledgement_status,acknowledged_at,condition,
-	       assigned_by,notes,returned_on
+	SELECT id,
+	       employee_id,
+	       asset_type,
+	       COALESCE(asset_name, ''),
+	       asset_category,
+	       COALESCE(serial_no, ''),
+	       assigned_on,
+	       acknowledgement_status,
+	       acknowledged_at,
+	       condition,
+	       assigned_by,
+	       COALESCE(notes, ''),
+	       returned_on
 	FROM employee_assets WHERE employee_id=$1 AND is_active=true`, id)
 	if err != nil {
 		return nil, err
@@ -192,9 +223,12 @@ func (r *OnboardingRepository) GetFullProfile(id int) (*model.OnboardingProfileD
 		assets = append(assets, a)
 	}
 
-	
 	idRows, err := r.DB.Query(context.Background(), `
-	SELECT id,employee_id,doc_type,doc_number,name_on_doc,
+	SELECT id,
+	       employee_id,
+	       doc_type,
+	       COALESCE(doc_number, ''),
+	       COALESCE(name_on_doc, ''),
 	       issue_date,expiry_date,extra_info,created_at
 	FROM employee_identity_documents WHERE employee_id=$1`, id)
 	if err != nil {

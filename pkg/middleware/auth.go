@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -15,7 +16,6 @@ type ContextClaims struct {
 
 func AuthMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-
 		authHeader := c.Get("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
 			return c.Status(401).JSON(fiber.Map{"error": "missing or invalid authorization header"})
@@ -41,8 +41,15 @@ func AuthMiddleware() fiber.Handler {
 			return c.Status(401).JSON(fiber.Map{"error": "invalid token claims"})
 		}
 
-		employeeID := int(mapClaims["employee_id"].(float64))
-		role := mapClaims["role"].(string)
+		employeeID, err := getIntClaim(mapClaims, "employee_id")
+		if err != nil {
+			return c.Status(401).JSON(fiber.Map{"error": "invalid employee id claim"})
+		}
+
+		role, err := getStringClaim(mapClaims, "role")
+		if err != nil {
+			return c.Status(401).JSON(fiber.Map{"error": "invalid role claim"})
+		}
 
 		c.Locals("claims", ContextClaims{
 			EmployeeID: employeeID,
@@ -53,7 +60,35 @@ func AuthMiddleware() fiber.Handler {
 	}
 }
 
+func getIntClaim(claims jwt.MapClaims, key string) (int, error) {
+	raw, ok := claims[key]
+	if !ok {
+		return 0, fmt.Errorf("missing claim %s", key)
+	}
 
-func GetClaims(c *fiber.Ctx) ContextClaims {
-	return c.Locals("claims").(ContextClaims)
+	value, ok := raw.(float64)
+	if !ok {
+		return 0, fmt.Errorf("claim %s has invalid type", key)
+	}
+
+	return int(value), nil
+}
+
+func getStringClaim(claims jwt.MapClaims, key string) (string, error) {
+	raw, ok := claims[key]
+	if !ok {
+		return "", fmt.Errorf("missing claim %s", key)
+	}
+
+	value, ok := raw.(string)
+	if !ok || value == "" {
+		return "", fmt.Errorf("claim %s has invalid type", key)
+	}
+
+	return value, nil
+}
+
+func GetClaims(c *fiber.Ctx) (ContextClaims, bool) {
+	claims, ok := c.Locals("claims").(ContextClaims)
+	return claims, ok
 }

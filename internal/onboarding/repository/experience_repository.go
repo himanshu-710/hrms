@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"hrms/internal/onboarding/model"
+	"time"
 )
 
 func (r *OnboardingRepository) AddExperience(req model.ExperienceRequest) error {  
@@ -40,14 +41,22 @@ func (r *OnboardingRepository) GetExperience(employeeID int) ([]model.Experience
 
 	for rows.Next() {
 		var exp model.Experience
+		var startDate time.Time
+		var endDate *time.Time
 
 		err := rows.Scan(
 			&exp.ID, &exp.EmployeeID, &exp.CompanyName, &exp.Designation,
-			&exp.EmploymentType, &exp.StartDate, &exp.EndDate,
+			&exp.EmploymentType, &startDate, &endDate,
 			&exp.IsCurrent, &exp.Industry, &exp.Description,
 		)
 		if err != nil {
 			return nil, err
+		}
+
+		exp.StartDate = startDate.Format("2006-01-02")
+		if endDate != nil {
+			formattedEndDate := endDate.Format("2006-01-02")
+			exp.EndDate = &formattedEndDate
 		}
 
 		list = append(list, exp)
