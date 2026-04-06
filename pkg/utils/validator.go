@@ -19,5 +19,5 @@ func Validate(s interface{}) error {
 	for _, e := range err.(validator.ValidationErrors) {
 		errs = append(errs, fmt.Sprintf("%s: %s", e.Field(), e.Tag()))
 	}
-	return fmt.Errorf(strings.Join(errs, ", "))
+	return fmt.Errorf("%s", strings.Join(errs, ", "))
 }

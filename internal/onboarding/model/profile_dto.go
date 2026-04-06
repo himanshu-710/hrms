@@ -1,10 +1,11 @@
 package model
 
 type CreateEmployeeRequest struct {
-	FirstName  string `json:"first_name"  validate:"required,min=1,max=100"`
-	LastName   string `json:"last_name"   validate:"required,min=1,max=100"`
-	Email      string `json:"personal_email" validate:"required,email"`
-	Department string `json:"department"`
+	FirstName             string `json:"first_name"              validate:"required,min=1,max=100"`
+	LastName              string `json:"last_name"               validate:"required,min=1,max=100"`
+	Email                 string `json:"personal_email"          validate:"required,email"`
+	Department            string `json:"department"`
+	EmploymentContextRole string `json:"employment_context_role" validate:"omitempty,oneof=EMPLOYEE HR "`
 }
 
 type VerifyDocumentRequest struct {
@@ -13,13 +14,13 @@ type VerifyDocumentRequest struct {
 }
 
 type OnboardingProfileDTO struct {
-	Employee   Employee           `json:"employee"`
-	Education  []Education        `json:"education"`
-	Experience []Experience       `json:"experience"`
-	Addresses  []Address          `json:"addresses"`
-	Documents  []EmployeeDocument `json:"documents"`
-	Assets     []EmployeeAsset    `json:"assets"`
-	Identity   []IdentityDocument `json:"identity"`
+	Employee   Employee               `json:"employee"`
+	Education  []Education            `json:"education"`
+	Experience []Experience           `json:"experience"`
+	Addresses  []Address              `json:"addresses"`
+	Documents  []EmployeeDocument     `json:"documents"`
+	Assets     []EmployeeAsset        `json:"assets"`
+	Identity   []IdentityDocument     `json:"identity"`
 	Relations  map[string]interface{} `json:"relations"`
 }
 

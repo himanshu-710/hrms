@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"hrms/internal/onboarding/model"
 	"hrms/pkg/middleware"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func (h *OnboardingHandler) Register(c *fiber.Ctx) error {
@@ -51,7 +52,10 @@ func (h *OnboardingHandler) RefreshToken(c *fiber.Ctx) error {
 }
 
 func (h *OnboardingHandler) Logout(c *fiber.Ctx) error {
-	claims := middleware.GetClaims(c)
+	claims, ok := middleware.GetClaims(c)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{"error": "missing authentication claims"})
+	}
 	if err := h.Service.Logout(claims.EmployeeID); err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

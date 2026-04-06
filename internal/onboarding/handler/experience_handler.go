@@ -5,17 +5,26 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"hrms/internal/onboarding/model"
+	"hrms/pkg/middleware"
 )
 
 func (h *OnboardingHandler) AddExperience(c *fiber.Ctx) error {
+	claims, ok := middleware.GetClaims(c)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{"error": "missing authentication claims"})
+	}
 
-	var req model.ExperienceRequest  
+	var req model.ExperienceRequest
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.AddExperience(req)  
+	if claims.Role != "HR" && claims.Role != "HR_ADMIN" && req.EmployeeID != claims.EmployeeID {
+		return c.Status(403).JSON(fiber.Map{"error": "access denied"})
+	}
+
+	err := h.Service.AddExperience(req)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -24,8 +33,10 @@ func (h *OnboardingHandler) AddExperience(c *fiber.Ctx) error {
 }
 
 func (h *OnboardingHandler) GetExperience(c *fiber.Ctx) error {
-
-	id, _ := strconv.Atoi(c.Params("employeeId"))
+	id, err := strconv.Atoi(c.Params("employeeId"))
+	if err != nil || id == 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid employee id"})
+	}
 
 	data, err := h.Service.GetExperience(id)
 	if err != nil {
@@ -36,10 +47,12 @@ func (h *OnboardingHandler) GetExperience(c *fiber.Ctx) error {
 }
 
 func (h *OnboardingHandler) DeleteExperience(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil || id == 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid experience id"})
+	}
 
-	id, _ := strconv.Atoi(c.Params("id"))
-
-	err := h.Service.DeleteExperience(id)
+	err = h.Service.DeleteExperience(id)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -48,16 +61,18 @@ func (h *OnboardingHandler) DeleteExperience(c *fiber.Ctx) error {
 }
 
 func (h *OnboardingHandler) UpdateExperience(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil || id == 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid experience id"})
+	}
 
-	id, _ := strconv.Atoi(c.Params("id"))
-
-	var req model.ExperienceRequest  
+	var req model.ExperienceRequest
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := h.Service.UpdateExperience(id, req)  
+	err = h.Service.UpdateExperience(id, req)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

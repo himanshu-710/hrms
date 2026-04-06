@@ -3,9 +3,10 @@ package routes
 import (
 	"time"
 
+	"hrms/pkg/middleware"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"hrms/pkg/middleware"
 )
 
 func RegisterAuthRoutes(app *fiber.App, h interface {
