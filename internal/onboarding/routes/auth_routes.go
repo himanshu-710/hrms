@@ -15,7 +15,6 @@ func RegisterAuthRoutes(app *fiber.App, h interface {
 	RefreshToken(c *fiber.Ctx) error
 	Logout(c *fiber.Ctx) error
 }) {
-	// Rate limiter — 10 requests per minute per IP (token bucket)
 	rateLimiter := limiter.New(limiter.Config{
 		Max:        10,
 		Expiration: 1 * time.Minute,

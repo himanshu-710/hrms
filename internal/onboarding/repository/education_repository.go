@@ -5,7 +5,7 @@ import (
 	"hrms/internal/onboarding/model"
 )
 
-func (r *OnboardingRepository) AddEducation(req model.EducationRequest) error {  
+func (r *OnboardingRepository) AddEducation(req model.EducationRequest) error {
 
 	query := `
 	INSERT INTO employee_education
@@ -59,7 +59,7 @@ func (r *OnboardingRepository) GetEducation(employeeID int) ([]model.Education, 
 	return list, nil
 }
 
-func (r *OnboardingRepository) UpdateEducation(id int, req model.EducationRequest) error {  // changed
+func (r *OnboardingRepository) UpdateEducation(id int, req model.EducationRequest) error {
 
 	query := `
 	UPDATE employee_education

@@ -22,23 +22,20 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	hrOnly := middleware.RequireRoles("HR")
 
 	RegisterAuthRoutes(app, h)
-	app.Post("/api/v1/onboarding/employee", middleware.AuthMiddleware(), hrOnly, h.CreateEmployee)
+	app.Get("/api/v1/onboarding/health", h.Health)
+	app.Post("/api/v1/onboarding/employee", h.CreateEmployee)
+
 	onboarding := app.Group("/api/v1/onboarding", middleware.AuthMiddleware())
 
-	onboarding.Get("/health", h.Health)
-
-	// Employee
 	onboarding.Get("/profile/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
 		return strconv.Atoi(c.Params("id"))
 	}), h.GetProfile)
 
-	// Profile — employeeId in URL, simple ownership check
 	onboarding.Put("/profile/:employeeId/primary", middleware.OwnershipGuard(), h.UpdatePrimaryDetails)
 	onboarding.Put("/profile/:employeeId/contact", middleware.OwnershipGuard(), h.UpdateContactDetails)
 	onboarding.Put("/profile/:employeeId/relations", middleware.OwnershipGuard(), h.UpdateRelations)
 	onboarding.Put("/profile/:employeeId/addresses", middleware.OwnershipGuard(), h.SaveAddresses)
 
-	// Education — ownerFn for update/delete because URL has :id not :employeeId
 	onboarding.Post("/education", h.AddEducation)
 	onboarding.Get("/education/:employeeId", middleware.OwnershipGuard(), h.GetEducation)
 	onboarding.Put("/education/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
@@ -50,7 +47,6 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 		return repo.GetEducationOwner(id)
 	}), h.DeleteEducation)
 
-	// Experience — same pattern
 	onboarding.Post("/experience", h.AddExperience)
 	onboarding.Get("/experience/:employeeId", middleware.OwnershipGuard(), h.GetExperience)
 	onboarding.Put("/experience/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
@@ -62,11 +58,9 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 		return repo.GetExperienceOwner(id)
 	}), h.DeleteExperience)
 
-	// Identity
 	onboarding.Put("/profile/:employeeId/identity", middleware.OwnershipGuard(), h.SaveIdentity)
 	onboarding.Get("/profile/:employeeId/identity", middleware.OwnershipGuard(), h.GetIdentity)
 
-	// Documents
 	onboarding.Post("/profile/:employeeId/documents", middleware.OwnershipGuard(), h.UploadDocument)
 	onboarding.Get("/profile/:employeeId/documents", middleware.OwnershipGuard(), h.GetDocuments)
 	onboarding.Delete("/documents/:id", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
@@ -75,7 +69,6 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	}), h.DeleteDocument)
 	onboarding.Patch("/documents/:id/verify", hrOnly, h.VerifyDocument)
 
-	// Assets
 	onboarding.Post("/profile/:employeeId/assets", hrOnly, h.AssignAsset)
 	onboarding.Get("/profile/:employeeId/assets", middleware.OwnershipGuard(), h.GetAssets)
 	onboarding.Patch("/assets/:id/acknowledge", middleware.OwnershipGuard(func(c *fiber.Ctx) (int, error) {
@@ -83,7 +76,6 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 		return repo.GetAssetOwner(id)
 	}), h.AcknowledgeAsset)
 
-	// Completion & Admin
 	onboarding.Get("/profile/:employeeId/completion", middleware.OwnershipGuard(), h.GetCompletion)
 	onboarding.Get("/admin/dashboard", hrOnly, h.GetDashboard)
 }
