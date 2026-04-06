@@ -22,7 +22,7 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	hrOnly := middleware.RequireRoles("HR")
 
 	RegisterAuthRoutes(app, h)
-	app.Get("/api/v1/onboarding/health", h.Health)
+	app.Get("/api/v1/onboarding/health", middleware.AuthMiddleware(), hrOnly, h.Health)
 	app.Post("/api/v1/onboarding/employee", h.CreateEmployee)
 
 	onboarding := app.Group("/api/v1/onboarding", middleware.AuthMiddleware())
