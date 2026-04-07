@@ -72,9 +72,17 @@ func (s *OnboardingService) Login(req model.LoginRequest) (*model.AuthResponse, 
 	}
 
 	return &model.AuthResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}, nil
+    AccessToken:  accessToken,
+    RefreshToken: refreshToken,
+    Role: emp.Role,
+    Employee: model.EmployeeDTO{
+        ID:           emp.ID,
+        FirstName:    emp.FirstName,
+        LastName:     emp.LastName,
+        WorkEmail:    emp.WorkEmail,
+        EmployeeCode: emp.EmployeeCode,
+    },
+}, nil
 }
 
 func (s *OnboardingService) Refresh(req model.RefreshRequest) (*model.AuthResponse, error) {

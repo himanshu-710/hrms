@@ -11,9 +11,18 @@ import (
 	"hrms/pkg/storage"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	
 )
 
+
 func RegisterOnboardingRoutes(app *fiber.App) {
+	
+	app.Use(cors.New(cors.Config{
+    AllowOrigins: "http://localhost:5173",
+    AllowHeaders: "Origin, Content-Type, Authorization",
+    AllowMethods: "GET, POST, PUT, PATCH, DELETE",
+}))
 
 	repo := repository.NewOnboardingRepository(database.DB)
 	store, err := storage.NewMinIOStorage()
@@ -25,6 +34,7 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	hrOnly := middleware.RequireRoles("HR")
 
 	RegisterAuthRoutes(app, h)
+	
 	app.Get("/api/v1/onboarding/health", middleware.AuthMiddleware(), hrOnly, h.Health)
 	app.Post("/api/v1/onboarding/employee", h.CreateEmployee)
 
