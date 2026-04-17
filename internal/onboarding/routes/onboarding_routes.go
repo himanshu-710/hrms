@@ -12,29 +12,28 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	
 )
 
+func RegisterOnboardingRoutes(app *fiber.App) *service.OnboardingService {
 
-func RegisterOnboardingRoutes(app *fiber.App) {
-	
 	app.Use(cors.New(cors.Config{
-    AllowOrigins: "http://localhost:5173",
-    AllowHeaders: "Origin, Content-Type, Authorization",
-    AllowMethods: "GET, POST, PUT, PATCH, DELETE",
-}))
+		AllowOrigins: "http://localhost:5173",
+		AllowHeaders: "Origin, Content-Type, Authorization",
+		AllowMethods: "GET, POST, PUT, PATCH, DELETE",
+	}))
 
 	repo := repository.NewOnboardingRepository(database.DB)
 	store, err := storage.NewMinIOStorage()
 	if err != nil {
 		panic(err)
 	}
-	svc := service.NewOnboardingService(repo, store)
+	dispatcher := service.NewOnboardingNotificationDispatcher(repo)
+	svc := service.NewOnboardingService(repo, store, dispatcher)
 	h := handler.NewOnboardingHandler(svc)
 	hrOnly := middleware.RequireRoles("HR")
 
 	RegisterAuthRoutes(app, h)
-	
+
 	app.Get("/api/v1/onboarding/health", middleware.AuthMiddleware(), hrOnly, h.Health)
 	app.Post("/api/v1/onboarding/employee", h.CreateEmployee)
 
@@ -90,5 +89,9 @@ func RegisterOnboardingRoutes(app *fiber.App) {
 	}), h.AcknowledgeAsset)
 
 	onboarding.Get("/profile/:employeeId/completion", middleware.OwnershipGuard(), h.GetCompletion)
+	onboarding.Get("/notifications", h.GetMyNotifications)
+	onboarding.Patch("/notifications/:id/read", h.MarkNotificationRead)
 	onboarding.Get("/admin/dashboard", hrOnly, h.GetDashboard)
+
+	return svc
 }

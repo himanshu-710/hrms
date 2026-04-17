@@ -248,6 +248,23 @@ CREATE TABLE IF NOT EXISTS employee_assets (
 CREATE INDEX IF NOT EXISTS idx_employee_assets_employee_id
 ON employee_assets(employee_id);
 
+CREATE TABLE IF NOT EXISTS notifications (
+    id SERIAL PRIMARY KEY,
+    employee_id INT REFERENCES employees(id) ON DELETE CASCADE,
+    notification_type TEXT NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    reminder_day INT,
+    metadata JSONB,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP,
+    UNIQUE(employee_id, notification_type, reminder_day)
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_employee_id
+ON notifications(employee_id);
+
 
 ALTER TABLE employees ADD COLUMN IF NOT EXISTS password_hash TEXT;
 ALTER TABLE employees ADD COLUMN IF NOT EXISTS refresh_token_hash TEXT;

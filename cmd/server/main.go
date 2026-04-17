@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"github.com/gofiber/fiber/v2"
 	"hrms/config"
 	"hrms/internal/onboarding/routes"
 	"hrms/pkg/database"
 	"hrms/pkg/middleware"
+	"hrms/pkg/scheduler"
 	"log"
 	"os"
 )
@@ -31,7 +33,8 @@ func main() {
 	app.Use(middleware.ErrorHandler())
 	app.Static("/uploads", "./uploads")
 
-	routes.RegisterOnboardingRoutes(app)
+	onboardingService := routes.RegisterOnboardingRoutes(app)
+	scheduler.StartOnboardingReminderCron(context.Background(), onboardingService)
 
 	port := os.Getenv("PORT")
 

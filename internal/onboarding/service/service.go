@@ -14,13 +14,15 @@ type StorageProvider interface {
 }
 
 type OnboardingService struct {
-	Repo    *repository.OnboardingRepository
-	Storage StorageProvider
+	Repo       *repository.OnboardingRepository
+	Storage    StorageProvider
+	Dispatcher NotificationDispatcher
 }
 
-func NewOnboardingService(repo *repository.OnboardingRepository, storage StorageProvider) *OnboardingService {
+func NewOnboardingService(repo *repository.OnboardingRepository, storage StorageProvider, dispatcher NotificationDispatcher) *OnboardingService {
 	return &OnboardingService{
-		Repo:    repo,
-		Storage: storage,
+		Repo:       repo,
+		Storage:    storage,
+		Dispatcher: dispatcher,
 	}
 }
