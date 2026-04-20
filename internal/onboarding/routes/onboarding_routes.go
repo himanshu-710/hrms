@@ -92,6 +92,7 @@ func RegisterOnboardingRoutes(app *fiber.App) *service.OnboardingService {
 	onboarding.Get("/notifications", h.GetMyNotifications)
 	onboarding.Patch("/notifications/:id/read", h.MarkNotificationRead)
 	onboarding.Get("/admin/dashboard", hrOnly, h.GetDashboard)
+	onboarding.Get("/admin/documents", hrOnly, h.GetPendingDocuments)
 
 	return svc
 }

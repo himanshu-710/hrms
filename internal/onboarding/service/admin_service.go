@@ -44,3 +44,7 @@ func (s *OnboardingService) GetDashboard() ([]model.DashboardRowDTO, error) {
 
 	return result, nil
 }
+
+func (s *OnboardingService) CreateEmployee(req model.CreateEmployeeRequest) (*model.Employee, error) {
+	return s.Repo.CreateEmployee(req)
+}

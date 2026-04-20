@@ -3,26 +3,10 @@ package repository
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"os"
-	"strings"
-	"time"
-
 	"hrms/internal/onboarding/model"
 	"hrms/pkg/utils"
+	"os"
 )
-
-func (r *OnboardingRepository) CreateEmployee(firstName, lastName, email, department, employmentContextRole string) error {
-	query := `
-	INSERT INTO employees(first_name, last_name, personal_email, employee_code, work_email, employment_context_role)
-	VALUES($1,$2,$3,$4,$5,$6)
-	`
-	code := fmt.Sprintf("EMP-%d", time.Now().UnixMilli())
-	workEmail := fmt.Sprintf("%s.%s@company.com", strings.ToLower(firstName), strings.ToLower(lastName))
-
-	_, err := r.DB.Exec(context.Background(), query, firstName, lastName, email, code, workEmail, employmentContextRole)
-	return err
-}
 
 func (r *OnboardingRepository) GetEmployee(id int) (*model.Employee, error) {
 

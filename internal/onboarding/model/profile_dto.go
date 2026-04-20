@@ -99,3 +99,13 @@ type AssignAssetRequest struct {
 	AssignedBy    int    `json:"assigned_by"    validate:"required"`
 	Notes         string `json:"notes"          validate:"max=500"`
 }
+
+type PendingDocumentDTO struct {
+	ID                 int    `json:"id"`
+	EmployeeName       string `json:"employee_name"`
+	DocCategory        string `json:"doc_category"`
+	FileName           string `json:"file_name"`
+	S3URL              string `json:"-"` // Used internally for presigned URL generation
+	PresignedURL       string `json:"presigned_url,omitempty"`
+	VerificationStatus string `json:"verification_status"`
+}

@@ -2,14 +2,6 @@ package service
 
 import "hrms/internal/onboarding/model"
 
-func (s *OnboardingService) CreateEmployee(firstName string, lastName string, email string, department string, employmentContextRole string) error {
-	if employmentContextRole == "" {
-		employmentContextRole = "EMPLOYEE"
-	}
-
-	return s.Repo.CreateEmployee(firstName, lastName, email, department, employmentContextRole)
-}
-
 func (s *OnboardingService) GetEmployee(id int) (*model.Employee, error) {
 	return s.Repo.GetEmployee(id)
 }
