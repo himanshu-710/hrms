@@ -24,7 +24,7 @@ type Employee struct {
 
 	Nationality string `json:"nationality"`
 
-	WorkEmail    string `json:"work_email"`
+	WorkEmail     string `json:"work_email"`
 	PersonalEmail string `json:"personal_email"`
 	MobileNo      string `json:"mobile_no"`
 	WorkNo        string `json:"work_no"`
@@ -32,14 +32,16 @@ type Employee struct {
 
 	Designation string `json:"designation"`
 
-	DepartmentID         *int `json:"department_id"`
-	ReportingManagerID   *int `json:"reporting_manager_id"`
-	DottedLineManagerID  *int `json:"dotted_line_manager_id"`
+	DepartmentID        *int `json:"department_id"`
+	ReportingManagerID  *int `json:"reporting_manager_id"`
+	DottedLineManagerID *int `json:"dotted_line_manager_id"`
 
 	DateOfJoining *time.Time `json:"date_of_joining"`
 
-	EmploymentType string `json:"employment_type"`
+	EmploymentType   string     `json:"employment_type"`
 	ProbationEndDate *time.Time `json:"probation_end_date"`
+
+	EmploymentContextRole string `json:"employment_context_role"`
 
 	Relations map[string]interface{} `json:"relations"`
 

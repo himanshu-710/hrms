@@ -62,11 +62,40 @@ func (r *OnboardingRepository) VerifyDocument(id int, status string, note string
 	return err
 }
 
-
 func (r *OnboardingRepository) GetDocumentOwner(id int) (int, error) {
 	var employeeID int
 	err := r.DB.QueryRow(context.Background(),
 		`SELECT employee_id FROM employee_documents WHERE id=$1`, id,
 	).Scan(&employeeID)
 	return employeeID, err
+}
+
+func (r *OnboardingRepository) GetPendingDocuments() ([]model.PendingDocumentDTO, error) {
+	query := `
+	SELECT d.id, d.doc_category, d.file_name, d.s3_url, d.verification_status,
+		   e.first_name || ' ' || e.last_name as employee_name
+	FROM employee_documents d
+	JOIN employees e ON d.employee_id = e.id
+	WHERE d.verification_status = 'PENDING'
+	ORDER BY d.uploaded_at DESC
+	`
+	rows, err := r.DB.Query(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var list []model.PendingDocumentDTO
+	for rows.Next() {
+		var doc model.PendingDocumentDTO
+		err := rows.Scan(
+			&doc.ID, &doc.DocCategory, &doc.FileName, &doc.S3URL,
+			&doc.VerificationStatus, &doc.EmployeeName,
+		)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, doc)
+	}
+	return list, nil
 }

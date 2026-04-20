@@ -12,18 +12,6 @@ func (h *OnboardingHandler) Health(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "Onboarding service working"})
 }
 
-func (h *OnboardingHandler) CreateEmployee(c *fiber.Ctx) error {
-	var req model.CreateEmployeeRequest
-	if err := c.BodyParser(&req); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
-	}
-	err := h.Service.CreateEmployee(req.FirstName, req.LastName, req.Email, req.Department, req.EmploymentContextRole)
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.JSON(fiber.Map{"message": "Employee created successfully"})
-}
-
 func (h *OnboardingHandler) GetProfile(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

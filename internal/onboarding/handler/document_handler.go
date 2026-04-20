@@ -57,3 +57,14 @@ func (h *OnboardingHandler) VerifyDocument(c *fiber.Ctx) error {
     }
     return c.JSON(fiber.Map{"message": "updated"})
 }
+
+// Add to document_handler.go
+func (h *OnboardingHandler) GetPendingDocuments(c *fiber.Ctx) error {
+    data, err := h.Service.GetPendingDocuments()
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "error": err.Error(),
+        })
+    }
+    return c.JSON(data)
+}
